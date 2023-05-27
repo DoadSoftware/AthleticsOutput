@@ -1,0 +1,9 @@
+com\athletics\config\core\SpringMvcInitializer.class
+com\athletics\config\DataSourceConfig.class
+com\athletics\config\SecurityConfig.class
+com\athletics\util\AthleticsUtil.class
+com\athletics\controller\IndexController.class
+com\athletics\config\core\SpringSecurityInitializer.class
+com\athletics\config\WebMvcConfig.class
+com\athletics\containers\ScoreBug.class
+com\athletics\containers\Scene.class
