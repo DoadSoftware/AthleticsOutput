@@ -14,6 +14,7 @@ public class AthleticsUtil {
 	public final static String CLOCK_XML = "CLOCK.XML";
 	public final static String API_XML = "API.XML";
 	public final static String XML_EXTENSION = ".xml";
+	public final static String LYNX_EVENT = "lynx.evt";
 	
 	public final static String PNG_EXTENSION = ".png";
 	public final static String DOUBLE_BACKSLASH = "\\";

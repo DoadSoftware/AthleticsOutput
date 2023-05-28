@@ -2,17 +2,27 @@ package com.athletics.model;
 
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-
-@XmlRootElement(name="Match")
-@XmlAccessorType(XmlAccessType.FIELD)
 public class Match {
 
-  @XmlTransient
   private List<NameSuper> nameSuper;
+  private List<Schedule> schedules;
+  private List<AthleteList> athleteList;
+  
+public List<Schedule> getSchedules() {
+	return schedules;
+}
+
+public void setSchedules(List<Schedule> schedules) {
+	this.schedules = schedules;
+}
+
+public List<AthleteList> getAthleteList() {
+	return athleteList;
+}
+
+public void setAthleteList(List<AthleteList> athleteList) {
+	this.athleteList = athleteList;
+}
 
 public List<NameSuper> getNameSuper() {
 	return nameSuper;

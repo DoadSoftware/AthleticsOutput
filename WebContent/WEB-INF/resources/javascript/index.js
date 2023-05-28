@@ -79,9 +79,24 @@ function uploadFormDataToSessionObjects(whatToProcess)
 function processUserSelection(whichInput,dataToProcess)
 {	
 	switch ($(whichInput).attr('name')) {
+	case 'animate_out_graphic_btn':
+		processAthleticsProcedures('ANIMATE_OUT');
+		break;
+	case 'finish_lineup_graphic_btn':
+		processAthleticsProcedures('FINISH_LINEUP_GRAPHICS_OPTIONS');
+		break;
+	case 'start_lineup_graphic_btn':
+		processAthleticsProcedures('START_LINEUP_GRAPHICS_OPTIONS');
+		break;
 	case 'cancel_graphics_btn':
 		$('#select_event_div').empty();
 		document.getElementById('select_event_div').style.display = 'none';
+		break;
+	case 'populate_start_lineup_btn':
+		processAthleticsProcedures('POPULATE-START-LINEUP');
+		break;
+	case 'populate_finish_lineup_btn':
+		processAthleticsProcedures('POPULATE-FINISH-LINEUP');
 		break;
 	case 'populate_namesuper_btn':
 		processAthleticsProcedures('POPULATE-L3-NAMESUPER');
@@ -114,6 +129,12 @@ function processAthleticsProcedures(whatToProcess, whichInput)
 	case 'POPULATE-L3-NAMESUPER':
 		valueToProcess = 'LT_Medal.sum' + ',' + $('#selectNameSuper option:selected').val() + ',' + $('#selectIcon option:selected').val();
 		break;
+	case 'POPULATE-START-LINEUP': 
+		valueToProcess = 'FF_StartList.sum' + ',' + $('#selectStartingLineUp option:selected').val();
+		break;
+	case 'POPULATE-FINISH-LINEUP':
+		valueToProcess = 'FF_Athletics_Standing.sum' + ',' + $('#selectFinishLineUp option:selected').val();
+		break;
 	}
 	
 	$.ajax({    
@@ -123,12 +144,20 @@ function processAthleticsProcedures(whatToProcess, whichInput)
         dataType : 'json',
         success : function(data) {
         	switch(whatToProcess) {
-			case 'NAMESUPER_GRAPHICS-OPTIONS':
-				addItemsToList('NAMESUPER-OPTIONS',data);
+			case 'START_LINEUP_GRAPHICS_OPTIONS': case 'FINISH_LINEUP_GRAPHICS_OPTIONS':
+			case 'NAMESUPER_GRAPHICS-OPTIONS': 
+				addItemsToList(whatToProcess,data);
 				break;
-			case 'POPULATE-L3-NAMESUPER':
+			case 'POPULATE-L3-NAMESUPER': case 'POPULATE-START-LINEUP': case 'POPULATE-FINISH-LINEUP':
 				if(confirm('Animate In?') == true){
-					processAthleticsProcedures('ANIMATE-IN-NAMESUPER');
+		        	switch(whatToProcess) {
+					case 'POPULATE-L3-NAMESUPER': 
+						processAthleticsProcedures('ANIMATE-IN-NAMESUPER');
+						break;
+					case 'POPULATE-START-LINEUP': case 'POPULATE-FINISH-LINEUP':
+						processAthleticsProcedures('ANIMATE-IN-LINEUP');
+						break;
+					}
 				}
 				break;
         	}
@@ -144,7 +173,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 	var div,row,cell,header_text,select,option,tr,th,thead,text,table,tbody;
 	
 	switch (whatToProcess) {
-	case'NAMESUPER-OPTIONS':
+	case 'START_LINEUP_GRAPHICS_OPTIONS': case 'FINISH_LINEUP_GRAPHICS_OPTIONS':
 
 		$('#select_event_div').empty();
 
@@ -163,7 +192,78 @@ function addItemsToList(whatToProcess, dataToProcess)
 		row = tbody.insertRow(tbody.rows.length);
 		
 		select = document.createElement('select');
-		select.style = 'width:130px';
+		switch (whatToProcess) {
+		case 'START_LINEUP_GRAPHICS_OPTIONS': 
+			select.id = 'selectStartingLineUp';
+			break;
+		case 'FINISH_LINEUP_GRAPHICS_OPTIONS':
+			select.id = 'selectFinishLineUp';
+			break;
+		}	
+		select.name = select.id;
+		
+		dataToProcess.athleteList.forEach(function(al,index,arr1){
+			option = document.createElement('option');
+			option.value = al.athleteListId;
+			option.text = al.header.split(',')[3];
+			select.appendChild(option);
+		});
+		
+		row.insertCell(0).appendChild(select);
+		removeSelectDuplicates(select.id);
+
+		option = document.createElement('input');
+	    option.type = 'button';
+		switch (whatToProcess) {
+		case 'START_LINEUP_GRAPHICS_OPTIONS': 
+		    option.name = 'populate_start_lineup_btn';
+			option.value = 'Populate Starting Line Up';
+			break;
+		case 'FINISH_LINEUP_GRAPHICS_OPTIONS':
+		    option.name = 'populate_finish_lineup_btn';
+			option.value = 'Populate Finish Line Up';
+			break;
+		}	
+		
+	    option.id = option.name;
+	    option.setAttribute('onclick',"processUserSelection(this)");
+	    
+	    div = document.createElement('div');
+	    div.append(option);
+
+		option = document.createElement('input');
+		option.type = 'button';
+		option.name = 'cancel_graphics_btn';
+		option.id = option.name;
+		option.value = 'Cancel';
+		option.setAttribute('onclick','processUserSelection(this)');
+
+	    div.append(option);
+	    
+	    row.insertCell(1).appendChild(div);
+		document.getElementById('select_event_div').style.display = '';
+		
+		break;
+		
+	case 'NAMESUPER_GRAPHICS-OPTIONS':
+
+		$('#select_event_div').empty();
+
+		header_text = document.createElement('h6');
+		header_text.innerHTML = 'Select Graphic Options';
+		document.getElementById('select_event_div').appendChild(header_text);
+		
+		table = document.createElement('table');
+		table.setAttribute('class', 'table table-bordered');
+				
+		tbody = document.createElement('tbody');
+
+		table.appendChild(tbody);
+		document.getElementById('select_event_div').appendChild(table);
+		
+		row = tbody.insertRow(tbody.rows.length);
+		
+		select = document.createElement('select');
 		select.id = 'selectNameSuper';
 		select.name = select.id;
 		
@@ -177,10 +277,9 @@ function addItemsToList(whatToProcess, dataToProcess)
 		row.insertCell(0).appendChild(select);
 
 		header_text = document.createElement('h6');
-		header_text.innerHTML = 'Select Icon.';
+		header_text.innerHTML = 'Select Icon';
 
 		select = document.createElement('select');
-		select.style = 'width:130px';
 		select.id = 'selectIcon';
 		select.name = select.id;
 		

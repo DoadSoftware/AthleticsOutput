@@ -38,7 +38,7 @@
 			    <label for="vizPortNumber" class="col-sm-4 col-form-label text-left">Viz Port Number 
 			    	<i class="fas fa-asterisk fa-sm text-danger" style="font-size: 7px;"></i></label>
 			    <div class="col-sm-6 col-md-6">
-		             <input type="text" id="vizPortNumber" name="vizPortNumber" value="${session_Configurations.portNumber}"
+		             <input type="text" id="vizPortNumber" name="vizPortNumber" value="${session_configuration.portNumber}"
 		             	class="form-control form-control-sm floatlabel"></input>
 			    </div>
 			  </div>
@@ -46,8 +46,16 @@
 			    <label for="vizIPAddress" class="col-sm-4 col-form-label text-left">Viz IP Address 
 			    	<i class="fas fa-asterisk fa-sm text-danger" style="font-size: 7px;"></i></label>
 			    <div class="col-sm-6 col-md-6">
-		             <input type="text" id="vizIPAddress" name="vizIPAddress" value="${session_Configurations.ipAddress}"
+		             <input type="text" id="vizIPAddress" name="vizIPAddress" value="${session_configuration.ipAddress}"
 		             		class="form-control form-control-sm floatlabel" value="localhost"></input>
+			    </div>
+			  </div>
+			  <div class="form-group row row-bottom-margin ml-2" style="margin-bottom:5px;">
+			    <label for="eventsNetworkDirectory" class="col-sm-4 col-form-label text-left">Events Network Directory 
+			    	<i class="fas fa-asterisk fa-sm text-danger" style="font-size: 7px;"></i></label>
+			    <div class="col-sm-6 col-md-6">
+		             <input type="text" id="eventsNetworkDirectory" name="eventsNetworkDirectory"
+		             	value="${session_configuration.filename}"	class="form-control form-control-sm floatlabel" value="localhost"></input>
 			    </div>
 			  </div>
 		    <button style="background-color:#2E008B;color:#FEFEFE;" class="btn btn-sm" type="button"

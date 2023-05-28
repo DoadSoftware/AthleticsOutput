@@ -38,11 +38,18 @@
 					<div class="panel-body">
  					  <div style="margin-bottom:5px;">
 						<div class="row">
-						 <div class="col-sm-4 col-md-4">
 						    <button style="background-color:#2E008B;color:#FEFEFE;" class="btn btn-sm" type="button"
 						  		name="namesuper_graphic_btn" id="namesuper_graphic_btn" 
 						  		onclick="processUserSelection(this);">Name Super</button>
-						 </div>
+						    <button style="background-color:#2E008B;color:#FEFEFE;" class="btn btn-sm" type="button"
+						  		name="start_lineup_graphic_btn" id="start_lineup_graphic_btn" 
+						  		onclick="processUserSelection(this);">Start Line Up</button>
+						    <button style="background-color:#2E008B;color:#FEFEFE;" class="btn btn-sm" type="button"
+						  		name="finish_lineup_graphic_btn" id="finish_lineup_graphic_btn" 
+						  		onclick="processUserSelection(this);">Finish Line Up</button>
+						    <button style="background-color:yellow;color:red;" class="btn btn-sm" type="button"
+						  		name="animate_out_graphic_btn" id="animate_out_graphic_btn" 
+						  		onclick="processUserSelection(this);">Animate Out</button>
 						</div>
 					  </div> 
 				    </div>
