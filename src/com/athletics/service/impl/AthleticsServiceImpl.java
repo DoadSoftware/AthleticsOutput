@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.athletics.doa.AthleticsDao;
 import com.athletics.model.NameSuper;
 import com.athletics.model.Player;
+import com.athletics.model.Schedule;
 import com.athletics.model.Team;
 import com.athletics.service.AthleticsService;
 
@@ -46,6 +47,11 @@ public List<NameSuper> getNameSupers() {
 @Override
 public List<Player> getAllPlayer() {
 	return athleticsDao.getAllPlayer();
+}
+
+@Override
+public List<Schedule> getSchedules() {
+	return athleticsDao.getSchedules();
 }
 
 }

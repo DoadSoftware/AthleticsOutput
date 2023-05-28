@@ -42,11 +42,26 @@
 						  		name="namesuper_graphic_btn" id="namesuper_graphic_btn" 
 						  		onclick="processUserSelection(this);">Name Super</button>
 						    <button style="background-color:#2E008B;color:#FEFEFE;" class="btn btn-sm" type="button"
-						  		name="start_lineup_graphic_btn" id="start_lineup_graphic_btn" 
-						  		onclick="processUserSelection(this);">Start Line Up</button>
+						  		name="start_list_track_graphic_btn" id="start_list_track_graphic_btn" 
+						  		onclick="processUserSelection(this);">Start List TRACK</button>
 						    <button style="background-color:#2E008B;color:#FEFEFE;" class="btn btn-sm" type="button"
-						  		name="finish_lineup_graphic_btn" id="finish_lineup_graphic_btn" 
-						  		onclick="processUserSelection(this);">Finish Line Up</button>
+						  		name="finish_list_track_graphic_btn" id="finish_list_track_graphic_btn" 
+						  		onclick="processUserSelection(this);">Finish List TRACK</button>
+						    <button style="background-color:#2E008B;color:#FEFEFE;" class="btn btn-sm" type="button"
+						  		name="schedule_graphic_btn" id="schedule_graphic_btn" 
+						  		onclick="processUserSelection(this);">Schedule</button>
+						    <button style="background-color:#2E008B;color:#FEFEFE;" class="btn btn-sm" type="button"
+						  		name="start_list_field_graphic_btn" id="start_list_field_graphic_btn" 
+						  		onclick="processUserSelection(this);">Start List FIELD</button>
+						    <button style="background-color:#2E008B;color:#FEFEFE;" class="btn btn-sm" type="button"
+						  		name="l3_medal_track_graphic_btn" id="l3_medal_track_graphic_btn" 
+						  		onclick="processUserSelection(this);">L3 Medal TRACK</button>
+						    <button style="background-color:#2E008B;color:#FEFEFE;" class="btn btn-sm" type="button"
+						  		name="l3_medal_field_graphic_btn" id="l3_medal_field_graphic_btn" 
+						  		onclick="processUserSelection(this);">L3 Medal FIELD</button>
+						    <button style="background-color:#2E008B;color:#FEFEFE;" class="btn btn-sm" type="button"
+						  		name="bug_sports_type_btn" id="bug_sports_type_btn" 
+						  		onclick="processUserSelection(this);">Bug Descipline</button>
 						    <button style="background-color:yellow;color:red;" class="btn btn-sm" type="button"
 						  		name="animate_out_graphic_btn" id="animate_out_graphic_btn" 
 						  		onclick="processUserSelection(this);">Animate Out</button>

@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Athlete {
 
   @XmlElement(name = "athleteId")
-  private Integer athleteId;
+  private int athleteId;
 
   @XmlElement(name = "surname")
   private String surname;
@@ -28,7 +28,7 @@ public Athlete() {
 	super();
 }
 
-public Athlete(Integer athleteId, String surname, String fullName, String teamname) {
+public Athlete(int athleteId, String surname, String fullName, String teamname) {
 	super();
 	this.athleteId = athleteId;
 	this.surname = surname;
@@ -36,7 +36,7 @@ public Athlete(Integer athleteId, String surname, String fullName, String teamna
 	this.teamname = teamname;
 }
 
-public Athlete(Integer athleteId, String surname, String fullName, String teamname, String stats) {
+public Athlete(int athleteId, String surname, String fullName, String teamname, String stats) {
 	super();
 	this.athleteId = athleteId;
 	this.surname = surname;
@@ -45,11 +45,11 @@ public Athlete(Integer athleteId, String surname, String fullName, String teamna
 	this.stats = stats;
 }
 
-public Integer getAthleteId() {
+public int getAthleteId() {
 	return athleteId;
 }
 
-public void setAthleteId(Integer athleteId) {
+public void setAthleteId(int athleteId) {
 	this.athleteId = athleteId;
 }
 

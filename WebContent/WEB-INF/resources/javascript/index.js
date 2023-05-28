@@ -1,4 +1,4 @@
-var clock_data;
+var match_data;
 function secondsTimeSpanToHMS(s) {
   var h = Math.floor(s / 3600); //Get whole hours
   s -= h * 3600;
@@ -79,24 +79,64 @@ function uploadFormDataToSessionObjects(whatToProcess)
 function processUserSelection(whichInput,dataToProcess)
 {	
 	switch ($(whichInput).attr('name')) {
+	case 'selectL3MedalFileOption':
+		addItemsToList('LOAD_TRACK_FIELD_PLAYERS',match_data);
+		break;
+	case 'selectMorningOrEvening':
+		if($('#selectMorningOrEvening option:selected').val() == 'Morning') {
+			$('#scheduleHeaderTxt').val('ATHLETICS MORNING SCHEDULE'); 
+		} else {
+			$('#scheduleHeaderTxt').val('ATHLETICS EVENING SCHEDULE'); 
+		}
+		break;
 	case 'animate_out_graphic_btn':
 		processAthleticsProcedures('ANIMATE_OUT');
 		break;
-	case 'finish_lineup_graphic_btn':
-		processAthleticsProcedures('FINISH_LINEUP_GRAPHICS_OPTIONS');
+	case 'bug_sports_type_btn':
+		processAthleticsProcedures('BUG_DESCIPLINE_GRAPHICS_OPTIONS');
 		break;
-	case 'start_lineup_graphic_btn':
-		processAthleticsProcedures('START_LINEUP_GRAPHICS_OPTIONS');
+	case 'l3_medal_track_graphic_btn':
+		processAthleticsProcedures('L3_MEDAL_TRACK_GRAPHICS_OPTIONS');
+		break;
+	case 'l3_medal_field_graphic_btn':
+		processAthleticsProcedures('L3_MEDAL_FIELD_GRAPHICS_OPTIONS');
+		break;
+	case 'populate_bug_descipline_btn':
+		processAthleticsProcedures('POPULATE-BUG-DESCIPLINE');
+		break;
+	case 'populate_l3_medal_track_btn':
+		processAthleticsProcedures('POPULATE-L3-MEDAL-TRACK');
+		break;
+	case 'populate_l3_medal_field_btn':
+		processAthleticsProcedures('POPULATE-L3-MEDAL-FIELD');
+		break;
+	case 'populate_schedule_btn':
+		processAthleticsProcedures('POPULATE-SCHEDULE');
+		break;
+	case 'schedule_graphic_btn':
+		processAthleticsProcedures('SCHEDULE_GRAPHICS_OPTIONS');
+		break;
+	case 'start_list_field_graphic_btn':
+		processAthleticsProcedures('START_LIST_FIELD_GRAPHICS_OPTIONS');
+		break;
+	case 'finish_list_track_graphic_btn':
+		processAthleticsProcedures('FINISH_LIST_TRACK_GRAPHICS_OPTIONS');
+		break;
+	case 'start_list_track_graphic_btn':
+		processAthleticsProcedures('START_LIST_TRACK_GRAPHICS_OPTIONS');
 		break;
 	case 'cancel_graphics_btn':
 		$('#select_event_div').empty();
 		document.getElementById('select_event_div').style.display = 'none';
 		break;
-	case 'populate_start_lineup_btn':
-		processAthleticsProcedures('POPULATE-START-LINEUP');
+	case 'populate_start_list_field_btn':
+		processAthleticsProcedures('POPULATE-START-LIST-FIELD');
 		break;
-	case 'populate_finish_lineup_btn':
-		processAthleticsProcedures('POPULATE-FINISH-LINEUP');
+	case 'populate_start_list_track_btn':
+		processAthleticsProcedures('POPULATE-START-LIST-TRACK');
+		break;
+	case 'populate_finish_list_track_btn':
+		processAthleticsProcedures('POPULATE-FINISH-LIST-TRACK');
 		break;
 	case 'populate_namesuper_btn':
 		processAthleticsProcedures('POPULATE-L3-NAMESUPER');
@@ -126,14 +166,31 @@ function processAthleticsProcedures(whatToProcess, whichInput)
 	var valueToProcess; 
 	
 	switch(whatToProcess) {
+	case 'POPULATE-BUG-DESCIPLINE':
+		valueToProcess = 'Bug_OneLine.sum' + ',' + $('#selectBugDescipline option:selected').val();
+		break;
+	case 'POPULATE-SCHEDULE':
+		valueToProcess = 'FF_Athletics_Standing.sum' + ',' + $('#selectScheduleStartRecord option:selected').val() 
+			+ ',' + $('#selectScheduleEndRecord option:selected').val() + ',' + $('#scheduleHeaderTxt').val()
+			+ ',' + $('#scheduleSubHeaderTxt').val();
+		break;
 	case 'POPULATE-L3-NAMESUPER':
-		valueToProcess = 'LT_Medal.sum' + ',' + $('#selectNameSuper option:selected').val() + ',' + $('#selectIcon option:selected').val();
+		valueToProcess = 'LT.sum' + ',' + $('#selectNameSuper option:selected').val() 
+			+ ',' + $('#selectIcon option:selected').val();
 		break;
-	case 'POPULATE-START-LINEUP': 
-		valueToProcess = 'FF_StartList.sum' + ',' + $('#selectStartingLineUp option:selected').val();
+	case 'POPULATE-L3-MEDAL-TRACK': case 'POPULATE-L3-MEDAL-FIELD': 
+		valueToProcess = 'LT.sum' + ',' + $('#selectL3MedalFileOption option:selected').val() 
+			+ ',' + $('#selectL3MedalPlayer option:selected').val() 
+			+ ',' + $('#selectL3MedalIcon option:selected').val();
 		break;
-	case 'POPULATE-FINISH-LINEUP':
-		valueToProcess = 'FF_Athletics_Standing.sum' + ',' + $('#selectFinishLineUp option:selected').val();
+	case 'POPULATE-START-LIST-FIELD':
+		valueToProcess = 'FF_StartList.sum' + ',' + $('#selectStartingListField option:selected').val();
+		break;
+	case 'POPULATE-START-LIST-TRACK': 
+		valueToProcess = 'FF_StartList.sum' + ',' + $('#selectStartingListTrack option:selected').val();
+		break;
+	case 'POPULATE-FINISH-LIST-TRACK':
+		valueToProcess = 'FF_Athletics_Standing.sum' + ',' + $('#selectFinishListTrack option:selected').val();
 		break;
 	}
 	
@@ -144,18 +201,35 @@ function processAthleticsProcedures(whatToProcess, whichInput)
         dataType : 'json',
         success : function(data) {
         	switch(whatToProcess) {
-			case 'START_LINEUP_GRAPHICS_OPTIONS': case 'FINISH_LINEUP_GRAPHICS_OPTIONS':
-			case 'NAMESUPER_GRAPHICS-OPTIONS': 
+			case 'START_LIST_TRACK_GRAPHICS_OPTIONS': case 'FINISH_LIST_TRACK_GRAPHICS_OPTIONS':
+			case 'NAMESUPER_GRAPHICS-OPTIONS': case 'SCHEDULE_GRAPHICS_OPTIONS': case 'START_LIST_FIELD_GRAPHICS_OPTIONS':
+			case 'L3_MEDAL_TRACK_GRAPHICS_OPTIONS': case 'L3_MEDAL_FIELD_GRAPHICS_OPTIONS':
+			case 'BUG_DESCIPLINE_GRAPHICS_OPTIONS':
 				addItemsToList(whatToProcess,data);
+				match_data = data;
 				break;
-			case 'POPULATE-L3-NAMESUPER': case 'POPULATE-START-LINEUP': case 'POPULATE-FINISH-LINEUP':
+			case 'POPULATE-L3-NAMESUPER': case 'POPULATE-START-LIST-TRACK': case 'POPULATE-FINISH-LIST-TRACK':
+			case 'POPULATE-SCHEDULE': case 'POPULATE-START-LIST-FIELD': case 'POPULATE-L3-MEDAL-TRACK': 
+			case 'POPULATE-L3-MEDAL-FIELD': case 'POPULATE-BUG-DESCIPLINE':
+				switch(whatToProcess) {
+				case 'POPULATE-FINISH-LIST-TRACK':
+					if(data.status == 'ERROR') {
+						alert('Finish result NOT found');
+						return false;
+					}
+					break;
+				}
 				if(confirm('Animate In?') == true){
 		        	switch(whatToProcess) {
-					case 'POPULATE-L3-NAMESUPER': 
+					case 'POPULATE-L3-NAMESUPER': case 'POPULATE-L3-MEDAL-TRACK': case 'POPULATE-L3-MEDAL-FIELD':
 						processAthleticsProcedures('ANIMATE-IN-NAMESUPER');
 						break;
-					case 'POPULATE-START-LINEUP': case 'POPULATE-FINISH-LINEUP':
+					case 'POPULATE-SCHEDULE': case 'POPULATE-START-LIST-TRACK': case 'POPULATE-FINISH-LIST-TRACK':
+					case 'POPULATE-START-LIST-FIELD':
 						processAthleticsProcedures('ANIMATE-IN-LINEUP');
+						break;
+					case 'POPULATE-BUG-DESCIPLINE':
+						processAthleticsProcedures('ANIMATE-IN-BUG');
 						break;
 					}
 				}
@@ -173,7 +247,167 @@ function addItemsToList(whatToProcess, dataToProcess)
 	var div,row,cell,header_text,select,option,tr,th,thead,text,table,tbody;
 	
 	switch (whatToProcess) {
-	case 'START_LINEUP_GRAPHICS_OPTIONS': case 'FINISH_LINEUP_GRAPHICS_OPTIONS':
+	case 'SCHEDULE_GRAPHICS_OPTIONS':
+		
+		$('#select_event_div').empty();
+
+		header_text = document.createElement('h6');
+		header_text.innerHTML = 'Select Graphic Options';
+		document.getElementById('select_event_div').appendChild(header_text);
+		
+		table = document.createElement('table');
+		table.setAttribute('class', 'table table-bordered');
+				
+		tbody = document.createElement('tbody');
+
+		table.appendChild(tbody);
+		document.getElementById('select_event_div').appendChild(table);
+		
+		row = tbody.insertRow(tbody.rows.length);
+		
+		select = document.createElement('select');
+		select.id = 'selectScheduleStartRecord';
+		select.name = select.id;
+		
+		dataToProcess.schedules.forEach(function(sc,index,arr1){
+			option = document.createElement('option');
+			option.value = sc.scheduleId;
+			option.text = (index + 1) + '. ' + sc.scheduleDate + ' ' + sc.scheduleTime + ' ' + sc.eventName;
+			select.appendChild(option);
+		});
+		row.insertCell(0).appendChild(select);
+
+		select = document.createElement('select');
+		select.id = 'selectScheduleEndRecord';
+		select.name = select.id;
+		
+		dataToProcess.schedules.forEach(function(sc,index,arr1){
+			option = document.createElement('option');
+			option.value = sc.scheduleId;
+			option.text = (index + 1) + '. ' + sc.scheduleDate + ' ' + sc.scheduleTime + ' ' + sc.eventName;
+			select.appendChild(option);
+		});
+		select.selectedIndex = 9;
+		row.insertCell(1).appendChild(select);
+
+		table = document.createElement('table');
+		table.setAttribute('class', 'table table-bordered');
+				
+		tbody = document.createElement('tbody');
+
+		table.appendChild(tbody);
+		document.getElementById('select_event_div').appendChild(table);
+
+		row = tbody.insertRow(tbody.rows.length);
+	    div = document.createElement('div');
+
+		text = document.createElement('input');
+		text.type = 'text';
+		text.id = 'scheduleHeaderTxt';
+		text.name = text.id;
+		text.value = 'ATHLETICS MORNING SCHEDULE';
+		
+		header_text = document.createElement('label');
+		header_text.htmlFor = text.id;
+		header_text.innerHTML = "Header Text";
+		div.append(header_text);
+		div.append(text);
+
+		row.insertCell(0).appendChild(div);
+		
+		div = document.createElement('div');
+		
+		select = document.createElement('select');
+		select.id = 'selectMorningOrEvening';
+		select.name = select.id;
+	    select.setAttribute('onchange',"processUserSelection(this)");
+		
+		option = document.createElement('option');
+		option.value = 'Morning';
+		option.text = 'Morning';
+		select.appendChild(option);	
+			
+		option = document.createElement('option');
+		option.value = 'Evening';
+		option.text = 'Evening';
+		select.appendChild(option);		
+
+		header_text = document.createElement('label');
+		header_text.htmlFor = select.id;
+		header_text.innerHTML = "Select Morning/Evening";
+
+		div.append(header_text);
+		div.append(select);
+				
+		row.insertCell(1).appendChild(div);
+		
+		$('#' + text.id).attr('size', '50')
+		
+		div = document.createElement('div');
+		row = tbody.insertRow(tbody.rows.length);
+		
+		text = document.createElement('input');
+		text.type = 'text';
+		text.id = 'scheduleSubHeaderTxt';
+		text.name = text.id;
+		text.value = 'FROM GURU GOBIND SINGH SPORTS COLLEGE ATHLETICS GROUND LUCKNOW';
+		
+		header_text = document.createElement('label');
+		header_text.htmlFor = text.id;
+		header_text.innerHTML = "Subheader Text";
+		div.append(header_text);
+		div.append(text);
+
+		row.insertCell(0).appendChild(div);
+		$('#' + text.id).attr('size', '80')
+
+		row = tbody.insertRow(tbody.rows.length);
+
+		option = document.createElement('input');
+	    option.type = 'button';
+	    option.name = 'populate_schedule_btn';
+		option.value = 'Populate Schedule';
+	    option.id = option.name;
+	    option.setAttribute('onclick',"processUserSelection(this)");
+	    
+	    div = document.createElement('div');
+	    div.append(option);
+
+		option = document.createElement('input');
+		option.type = 'button';
+		option.name = 'cancel_graphics_btn';
+		option.id = option.name;
+		option.value = 'Cancel';
+		option.setAttribute('onclick','processUserSelection(this)');
+
+	    div.append(option);
+	    
+	    row.insertCell(0).appendChild(div);
+		document.getElementById('select_event_div').style.display = '';
+		
+		break;
+		
+	case 'LOAD_TRACK_FIELD_PLAYERS':
+
+		$('#selectL3MedalPlayer').empty();
+
+		select = document.getElementById('selectL3MedalPlayer');
+
+		dataToProcess.athleteList.forEach(function(al,index,arr1){
+			if(al.athleteListId == $('#selectL3MedalFileOption option:selected').val()) {
+				al.athletes.forEach(function(plyr,index,arr1){
+					option = document.createElement('option');
+					option.value = plyr.athleteId;
+					option.text = plyr.fullName;
+					select.appendChild(option);
+				});
+			}
+		});
+		
+		break;
+		
+	case 'START_LIST_TRACK_GRAPHICS_OPTIONS': case 'FINISH_LIST_TRACK_GRAPHICS_OPTIONS': case 'START_LIST_FIELD_GRAPHICS_OPTIONS':
+	case 'L3_MEDAL_TRACK_GRAPHICS_OPTIONS': case 'L3_MEDAL_FIELD_GRAPHICS_OPTIONS': case 'BUG_DESCIPLINE_GRAPHICS_OPTIONS':
 
 		$('#select_event_div').empty();
 
@@ -193,35 +427,101 @@ function addItemsToList(whatToProcess, dataToProcess)
 		
 		select = document.createElement('select');
 		switch (whatToProcess) {
-		case 'START_LINEUP_GRAPHICS_OPTIONS': 
-			select.id = 'selectStartingLineUp';
+		case 'BUG_DESCIPLINE_GRAPHICS_OPTIONS':
+			select.id = 'selectBugDescipline';
 			break;
-		case 'FINISH_LINEUP_GRAPHICS_OPTIONS':
-			select.id = 'selectFinishLineUp';
+		case 'L3_MEDAL_TRACK_GRAPHICS_OPTIONS': case 'L3_MEDAL_FIELD_GRAPHICS_OPTIONS':
+			select.id = 'selectL3MedalFileOption';
+			select.setAttribute('onchange',"processUserSelection(this)");
+			break;
+		case 'START_LIST_FIELD_GRAPHICS_OPTIONS':
+			select.id = 'selectStartingListField';
+			break;
+		case 'START_LIST_TRACK_GRAPHICS_OPTIONS': 
+			select.id = 'selectStartingListTrack';
+			break;
+		case 'FINISH_LIST_TRACK_GRAPHICS_OPTIONS':
+			select.id = 'selectFinishListTrack';
 			break;
 		}	
 		select.name = select.id;
 		
-		dataToProcess.athleteList.forEach(function(al,index,arr1){
-			option = document.createElement('option');
-			option.value = al.athleteListId;
-			option.text = al.header.split(',')[3];
-			select.appendChild(option);
-		});
+		if(dataToProcess.athleteList) {
+			dataToProcess.athleteList.forEach(function(al,index,arr1){
+				option = document.createElement('option');
+				option.value = al.athleteListId;
+				option.text = al.header.split(',')[0] + '.' + al.header.split(',')[1] + '.' + al.header.split(',')[2] + '. ' + al.header.split(',')[3];
+				select.appendChild(option);
+			});
+		}
 		
 		row.insertCell(0).appendChild(select);
-		removeSelectDuplicates(select.id);
+		switch (whatToProcess) {
+		case 'L3_MEDAL_TRACK_GRAPHICS_OPTIONS': case 'L3_MEDAL_FIELD_GRAPHICS_OPTIONS':
+
+			header_text = document.createElement('h6');
+			header_text.innerHTML = 'Select Player';
+			select = document.createElement('select');
+			select.id = 'selectL3MedalPlayer';
+
+			row.insertCell(1).appendChild(header_text).appendChild(select);
+
+			header_text = document.createElement('h6');
+			header_text.innerHTML = 'Select Medal';
+			select = document.createElement('select');
+			select.id = 'selectL3MedalIcon';
+
+			option = document.createElement('option');
+			option.value = 'none';
+			option.text = 'None';
+			select.appendChild(option);
+
+			option = document.createElement('option');
+			option.value = 'gold';
+			option.text = 'Gold';
+			select.appendChild(option);
+
+			option = document.createElement('option');
+			option.value = 'silver';
+			option.text = 'Silver';
+			select.appendChild(option);
+
+			option = document.createElement('option');
+			option.value = 'bronze';
+			option.text = 'Bronze';
+			select.appendChild(option);
+
+			row.insertCell(2).appendChild(header_text).appendChild(select);
+
+			break;
+		}	
 
 		option = document.createElement('input');
 	    option.type = 'button';
 		switch (whatToProcess) {
-		case 'START_LINEUP_GRAPHICS_OPTIONS': 
-		    option.name = 'populate_start_lineup_btn';
-			option.value = 'Populate Starting Line Up';
+		case 'BUG_DESCIPLINE_GRAPHICS_OPTIONS':
+		    option.name = 'populate_bug_descipline_btn';
+			option.value = 'Populate Bug Descipline';
 			break;
-		case 'FINISH_LINEUP_GRAPHICS_OPTIONS':
-		    option.name = 'populate_finish_lineup_btn';
-			option.value = 'Populate Finish Line Up';
+		case 'L3_MEDAL_TRACK_GRAPHICS_OPTIONS': 
+		    option.name = 'populate_l3_medal_track_btn';
+			option.value = 'Populate L3 Medal Track';
+			break;
+		case 'L3_MEDAL_FIELD_GRAPHICS_OPTIONS':
+		    option.name = 'populate_l3_medal_field_btn';
+			option.value = 'Populate L3 Medal Field';
+			break;
+		case 'START_LIST_FIELD_GRAPHICS_OPTIONS':
+		    option.name = 'populate_start_list_field_btn';
+			option.value = 'Populate Starting Field';
+			break;
+		case 'START_LIST_TRACK_GRAPHICS_OPTIONS': 
+		    option.name = 'populate_start_list_track_btn';
+			option.value = 'Populate Starting Track';
+			break;
+		case 'FINISH_LIST_TRACK_GRAPHICS_OPTIONS':
+		    option.name = 'populate_finish_list_track_btn';
+			option.value = 'Populate Finish Track';
 			break;
 		}	
 		
@@ -240,7 +540,14 @@ function addItemsToList(whatToProcess, dataToProcess)
 
 	    div.append(option);
 	    
-	    row.insertCell(1).appendChild(div);
+		switch (whatToProcess) {
+		case 'L3_MEDAL_TRACK_GRAPHICS_OPTIONS': case 'L3_MEDAL_FIELD_GRAPHICS_OPTIONS':
+		    row.insertCell(3).appendChild(div);
+			break;
+		default:
+		    row.insertCell(1).appendChild(div);
+			break;
+		}
 		document.getElementById('select_event_div').style.display = '';
 		
 		break;
@@ -278,23 +585,27 @@ function addItemsToList(whatToProcess, dataToProcess)
 
 		header_text = document.createElement('h6');
 		header_text.innerHTML = 'Select Icon';
-
+		
 		select = document.createElement('select');
 		select.id = 'selectIcon';
 		select.name = select.id;
 		
-		for(var i=1; i<=3; i++) {
+		for(var i=1; i<=4; i++) {
 			option = document.createElement('option');
 			switch(i){
 			case 1:
+				option.value = '';
+				option.text = '';
+				break;				
+			case 2:
 				option.value = 'gold';
 				option.text = 'Gold';
 				break;				
-			case 2:
+			case 3:
 				option.value = 'silver';
 				option.text = 'Silver';
 				break;				
-			case 3:
+			case 4:
 				option.value = 'bronze';
 				option.text = 'Bronze';
 				break;				

@@ -100,16 +100,31 @@ public class IndexController
 					throws JAXBException, IllegalAccessException, InvocationTargetException, IOException, 
 					NumberFormatException, InterruptedException
 	{	
-		List<String> fileLines;
+		List<String> fileLines = null;
 		List<Athlete> athletes;
 		String file_name = "";
 		
 		switch (whatToProcess) {
-		case "START_LINEUP_GRAPHICS_OPTIONS": case "FINISH_LINEUP_GRAPHICS_OPTIONS":
+		case "SCHEDULE_GRAPHICS_OPTIONS":
+			
+			session_match.setSchedules(athleticsService.getSchedules());
+			return JSONObject.fromObject(session_match).toString();
+		
+		case "START_LIST_FIELD_GRAPHICS_OPTIONS": case "L3_MEDAL_TRACK_GRAPHICS_OPTIONS": case "L3_MEDAL_FIELD_GRAPHICS_OPTIONS":
+		case "START_LIST_TRACK_GRAPHICS_OPTIONS": case "FINISH_LIST_TRACK_GRAPHICS_OPTIONS": case "BUG_DESCIPLINE_GRAPHICS_OPTIONS":
 			
 			if (sessionEventsNetworkDirectory != null && !sessionEventsNetworkDirectory.trim().isEmpty()) {
-				fileLines = Files.readAllLines(Paths.get(sessionEventsNetworkDirectory 
-					+ AthleticsUtil.LYNX_EVENT));
+				switch (whatToProcess) {
+				case "START_LIST_FIELD_GRAPHICS_OPTIONS": case "L3_MEDAL_FIELD_GRAPHICS_OPTIONS":
+					fileLines = Files.readAllLines(Paths.get(sessionEventsNetworkDirectory 
+							+ AthleticsUtil.FLD_LYNX_EVENT));
+					break;
+				case "START_LIST_TRACK_GRAPHICS_OPTIONS": case "FINISH_LIST_TRACK_GRAPHICS_OPTIONS":
+				case "L3_MEDAL_TRACK_GRAPHICS_OPTIONS": case "BUG_DESCIPLINE_GRAPHICS_OPTIONS":
+					fileLines = Files.readAllLines(Paths.get(sessionEventsNetworkDirectory 
+							+ AthleticsUtil.LYNX_EVENT));
+					break;
+				}
 				atheletesList = new ArrayList<AthleteList>();
 				athletes = new ArrayList<Athlete>();
 				for (int i=0; i<=fileLines.size()-1; i++) {
@@ -128,6 +143,29 @@ public class IndexController
 				if(athletes.size() > 0) {
 					atheletesList.get(atheletesList.size()-1).setAthletes(athletes);
 				}
+				switch (whatToProcess) {
+				case "BUG_DESCIPLINE_GRAPHICS_OPTIONS":
+					fileLines = Files.readAllLines(Paths.get(sessionEventsNetworkDirectory 
+							+ AthleticsUtil.FLD_LYNX_EVENT));
+					athletes = new ArrayList<Athlete>();
+					for (int i=0; i<=fileLines.size()-1; i++) {
+						if(!fileLines.get(i).split(",")[0].trim().isEmpty()) {
+							if(athletes.size() > 0) {
+								atheletesList.get(atheletesList.size()-1).setAthletes(athletes);
+								athletes = new ArrayList<Athlete>();
+							}
+							atheletesList.add(new AthleteList(atheletesList.size()+1, fileLines.get(i))); 
+						} else {
+							athletes.add(new Athlete(Integer.valueOf(fileLines.get(i).split(",")[1]), 
+								fileLines.get(i).split(",")[3], fileLines.get(i).split(",")[4], 
+								fileLines.get(i).split(",")[5]));
+						}
+					}
+					if(athletes.size() > 0) {
+						atheletesList.get(atheletesList.size()-1).setAthletes(athletes);
+					}
+					break;
+				}
 				session_match.setAthleteList(atheletesList);
 			}
 			return JSONObject.fromObject(session_match).toString();
@@ -137,10 +175,12 @@ public class IndexController
 			session_match.setNameSuper(athleticsService.getNameSupers());
 			return JSONObject.fromObject(session_match).toString();
 			
-		case "POPULATE-L3-NAMESUPER": case "POPULATE-START-LINEUP": case "POPULATE-FINISH-LINEUP":
+		case "POPULATE-L3-NAMESUPER": case "POPULATE-START-LIST-TRACK": case "POPULATE-FINISH-LIST-TRACK":
+		case "POPULATE-SCHEDULE": case "POPULATE-START-LIST-FIELD": case "POPULATE-L3-MEDAL-TRACK": 
+		case "POPULATE-L3-MEDAL-FIELD": case "POPULATE-BUG-DESCIPLINE":
 			
 			switch (whatToProcess) {
-			case "POPULATE-FINISH-LINEUP":
+			case "POPULATE-FINISH-LIST-TRACK":
 				
 				AthleteList this_athlete_list = session_match.getAthleteList().stream().filter(
 					al -> al.getAthleteListId() == Integer.valueOf(valueToProcess.split(",")[1])).findAny().orElse(null);
@@ -154,6 +194,10 @@ public class IndexController
 						file_name = String.format("%03d", Integer.valueOf(this_athlete_list.getHeader().split(",")[0])) 
 							+ "-" + this_athlete_list.getHeader().split(",")[1] + "-" 
 							+ String.format("%02d", Integer.valueOf(this_athlete_list.getHeader().split(",")[2])) + ".lif";
+						if(!new File(sessionEventsNetworkDirectory + file_name).exists()) {
+							session_match.setStatus("ERROR");
+							return JSONObject.fromObject(session_match).toString();
+						}
 						fileLines = Files.readAllLines(Paths.get(sessionEventsNetworkDirectory + file_name));
 						
 						for (int i=0; i<=fileLines.size()-1; i++) {
@@ -162,9 +206,15 @@ public class IndexController
 								atheletesList.add(new AthleteList(atheletesList.size()+1, fileLines.get(i))); 
 								break;
 							default:
-								athletes.add(new Athlete(Integer.valueOf(fileLines.get(i).split(",")[1]), 
-									fileLines.get(i).split(",")[3], fileLines.get(i).split(",")[4], 
-									fileLines.get(i).split(",")[5], fileLines.get(i).split(",")[6]));
+								if(fileLines.get(i).split(",")[6].isEmpty()) {
+									athletes.add(new Athlete(Integer.valueOf(fileLines.get(i).split(",")[1]), 
+											fileLines.get(i).split(",")[3], fileLines.get(i).split(",")[4], 
+											fileLines.get(i).split(",")[5], fileLines.get(i).split(",")[0]));
+								} else {
+									athletes.add(new Athlete(Integer.valueOf(fileLines.get(i).split(",")[1]), 
+											fileLines.get(i).split(",")[3], fileLines.get(i).split(",")[4], 
+											fileLines.get(i).split(",")[5], fileLines.get(i).split(",")[6]));
+								}
 								break;
 							}
 						}
@@ -174,13 +224,13 @@ public class IndexController
 				}
 				break;
 			}
-			
+			session_match.setStatus("");
 			session_scene.setScene_path(kheloIndia.getScenes_path() + valueToProcess.split(",")[0]);
 			session_scene.scene_load(print_writer, session_selected_broadcaster);
 			kheloIndia.ProcessGraphicOption(whatToProcess, session_match, athleticsService, print_writer, valueToProcess);
 			return JSONObject.fromObject(session_match).toString();
 			
-		case "ANIMATE-IN-NAMESUPER": case "ANIMATE-IN-LINEUP": case "ANIMATE_OUT":
+		case "ANIMATE-IN-NAMESUPER": case "ANIMATE-IN-LINEUP": case "ANIMATE-IN-BUG": case "ANIMATE_OUT":
 			
 			kheloIndia.ProcessGraphicOption(whatToProcess, session_match, athleticsService, print_writer, valueToProcess);
 			return JSONObject.fromObject(session_match).toString();

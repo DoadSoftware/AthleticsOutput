@@ -3,6 +3,7 @@ package com.athletics.doa;
 import java.util.List;
 import com.athletics.model.NameSuper;
 import com.athletics.model.Player;
+import com.athletics.model.Schedule;
 import com.athletics.model.Team;
 
 public interface AthleticsDao {
@@ -12,4 +13,5 @@ public interface AthleticsDao {
   List<Player> getAllPlayer();
   List<Team> getTeams();
   List<NameSuper> getNameSupers();
+  List<Schedule> getSchedules();
 }

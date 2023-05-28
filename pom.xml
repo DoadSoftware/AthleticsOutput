@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>AthleticsOutput</groupId>
   <artifactId>AthleticsOutput</artifactId>
-  <version>1.4</version>
+  <version>1.6</version>
   <packaging>war</packaging>
   <name>AthleticsOutput</name>
   <properties>

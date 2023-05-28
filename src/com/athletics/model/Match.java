@@ -4,10 +4,19 @@ import java.util.List;
 
 public class Match {
 
+  private String status;
   private List<NameSuper> nameSuper;
   private List<Schedule> schedules;
   private List<AthleteList> athleteList;
   
+public String getStatus() {
+	return status;
+}
+
+public void setStatus(String status) {
+	this.status = status;
+}
+
 public List<Schedule> getSchedules() {
 	return schedules;
 }

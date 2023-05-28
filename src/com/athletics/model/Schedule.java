@@ -89,4 +89,11 @@ public void setRound(String round) {
 	this.round = round;
 }
 
+@Override
+public String toString() {
+	return "Schedule [scheduleId=" + scheduleId + ", scheduleDate=" + scheduleDate + ", scheduleTime=" + scheduleTime
+			+ ", eventName=" + eventName + ", specification=" + specification + ", gender=" + gender + ", round="
+			+ round + "]";
+}
+
 }

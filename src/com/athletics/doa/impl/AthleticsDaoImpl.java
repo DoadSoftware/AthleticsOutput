@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.athletics.doa.AthleticsDao;
 import com.athletics.model.NameSuper;
 import com.athletics.model.Player;
+import com.athletics.model.Schedule;
 import com.athletics.model.Team;
 
 @Transactional
@@ -46,5 +47,10 @@ public List<NameSuper> getNameSupers() {
 @Override
 public List<Player> getAllPlayer() {
 	return sessionFactory.getCurrentSession().createQuery("from Player").list();
+}
+
+@Override
+public List<Schedule> getSchedules() {
+	return sessionFactory.getCurrentSession().createQuery("from Schedule").list();
 }
 }
