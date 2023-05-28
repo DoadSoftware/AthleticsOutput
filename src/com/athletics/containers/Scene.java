@@ -47,18 +47,16 @@ public class Scene {
 	public void scene_load(PrintWriter print_writer, String broadcaster) throws InterruptedException
 	{
 		switch (broadcaster.toUpperCase()) {
-		case AthleticsUtil.SPORTS_DIRECTORY: case AthleticsUtil.ATHLETICS_DIRECTORY:
+		case "KHELO_INDIA": 
 			switch(this.which_layer) {
 			case AthleticsUtil.ONE:
 				print_writer.println("LAYER1*EVEREST*SINGLE_SCENE LOAD " + this.scene_path + ";");
-				
 				print_writer.println("LAYER1*EVEREST*STAGE*DIRECTOR*In STOP;");
 				print_writer.println("LAYER1*EVEREST*STAGE*DIRECTOR*In SHOW 0.0;");
 				TimeUnit.MILLISECONDS.sleep(500);
 				break;
 			case AthleticsUtil.TWO:
 				print_writer.println("LAYER2*EVEREST*SINGLE_SCENE LOAD " + this.scene_path + ";");
-				
 				print_writer.println("LAYER2*EVEREST*STAGE*DIRECTOR*In STOP;");
 				print_writer.println("LAYER2*EVEREST*STAGE*DIRECTOR*In SHOW 0.0;");
 				TimeUnit.MILLISECONDS.sleep(500);

@@ -15,7 +15,6 @@
 </head>
 <body onload="afterPageLoad('CLOCK');">
 <form:form name="football_form" autocomplete="off" action="match" method="POST" enctype="multipart/form-data">
-<!-- <input type ="button" onClick ="multiplyBy()" Value = "Multiply"/> -->
 <div class="content py-5" style="background-color: #EAE8FF; color: #2E008B">
   <div class="container">
 	<div class="row">
@@ -32,16 +31,17 @@
 			    <div class="panel panel-default">
 			      <div class="panel-heading">
 			        <h4 class="panel-title">
-			          <a data-toggle="collapse" data-parent="#match_configuration" href="#load_setup_match">Configuration</a>
+			          <a data-toggle="collapse" data-parent="#match_configuration" href="#load_output">Configuration</a>
 			        </h4>
 			      </div>
-			      <div class="panel-collapse collapse">
+			      <div id="load_output" class="panel-collapse collapse">
 					<div class="panel-body">
  					  <div style="margin-bottom:5px;">
 						<div class="row">
 						 <div class="col-sm-4 col-md-4">
 						    <button style="background-color:#2E008B;color:#FEFEFE;" class="btn btn-sm" type="button"
-						  		name="name_super" id="name_super" onclick="processUserSelection(this);">Name Super</button>
+						  		name="namesuper_graphic_btn" id="namesuper_graphic_btn" 
+						  		onclick="processUserSelection(this);">Name Super</button>
 						 </div>
 						</div>
 					  </div> 

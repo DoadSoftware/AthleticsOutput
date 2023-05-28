@@ -6,20 +6,35 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.text.ParseException;
 import javax.xml.bind.JAXBException;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.athletics.broadcaster.KheloIndia;
+import com.athletics.containers.Scene;
+import com.athletics.model.Match;
+import com.athletics.service.AthleticsService;
+import com.athletics.util.AthleticsUtil;
+
 import net.sf.json.JSONObject;
 
 @Controller
 public class IndexController
 {
+	@Autowired
+	AthleticsService athleticsService;
+	
+	public static KheloIndia kheloIndia;
+	public static Match session_match;
 	public static PrintWriter print_writer;
 	public static Socket session_socket;
 	public static String session_selected_broadcaster;
+	public static Scene session_scene;
 	
 	@RequestMapping(value = {"/","/initialise"}, method={RequestMethod.GET,RequestMethod.POST}) 
 	public String initialisePage(ModelMap model)
@@ -37,6 +52,8 @@ public class IndexController
 					throws JAXBException, IOException, ParseException 
 	{
 		session_selected_broadcaster = selectedBroadcaster;
+		session_match = new Match();
+		kheloIndia = new KheloIndia();
 		
 		if(!vizIPAddresss.isEmpty()) {
 			session_socket = new Socket(vizIPAddresss, Integer.valueOf(vizPortNumber));
@@ -58,8 +75,17 @@ public class IndexController
 	{	
 		switch (whatToProcess) {
 		case "NAMESUPER_GRAPHICS-OPTIONS":
-			break;
+			session_match.setNameSuper(athleticsService.getNameSupers());
+			return JSONObject.fromObject(session_match).toString();
+		case "POPULATE-L3-NAMESUPER":
+			session_scene = new Scene(kheloIndia.getScenes_path() + valueToProcess.split(",")[0],AthleticsUtil.ONE);
+			session_scene.scene_load(print_writer, session_selected_broadcaster);
+			kheloIndia.ProcessGraphicOption(whatToProcess, session_match, athleticsService, print_writer, valueToProcess);
+		case "ANIMATE-IN-NAMESUPER":
+			kheloIndia.ProcessGraphicOption(whatToProcess, session_match, athleticsService, print_writer, valueToProcess);
+			return JSONObject.fromObject(session_match).toString();
+		default:
+			return JSONObject.fromObject(null).toString();
 		}
-		return JSONObject.fromObject(null).toString();
 	}
 }
