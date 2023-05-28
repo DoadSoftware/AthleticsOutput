@@ -79,6 +79,9 @@ function uploadFormDataToSessionObjects(whatToProcess)
 function processUserSelection(whichInput,dataToProcess)
 {	
 	switch ($(whichInput).attr('name')) {
+	case 'finish_list_field_graphic_btn':
+		processAthleticsProcedures('FINISH_LIST_FIELD_GRAPHICS_OPTIONS');
+		break;
 	case 'selectL3MedalFileOption':
 		addItemsToList('LOAD_TRACK_FIELD_PLAYERS',match_data);
 		break;
@@ -128,6 +131,9 @@ function processUserSelection(whichInput,dataToProcess)
 	case 'cancel_graphics_btn':
 		$('#select_event_div').empty();
 		document.getElementById('select_event_div').style.display = 'none';
+		break;
+	case 'populate_finish_list_field_btn':
+		processAthleticsProcedures('POPULATE-FINISH-LIST-FIELD');
 		break;
 	case 'populate_start_list_field_btn':
 		processAthleticsProcedures('POPULATE-START-LIST-FIELD');
@@ -183,6 +189,9 @@ function processAthleticsProcedures(whatToProcess, whichInput)
 			+ ',' + $('#selectL3MedalPlayer option:selected').val() 
 			+ ',' + $('#selectL3MedalIcon option:selected').val();
 		break;
+	case 'POPULATE-FINISH-LIST-FIELD':
+		valueToProcess = 'FF_Athletics_Standing.sum' + ',' + $('#selectFinishListField option:selected').val();
+		break;
 	case 'POPULATE-START-LIST-FIELD':
 		valueToProcess = 'FF_StartList.sum' + ',' + $('#selectStartingListField option:selected').val();
 		break;
@@ -204,13 +213,13 @@ function processAthleticsProcedures(whatToProcess, whichInput)
 			case 'START_LIST_TRACK_GRAPHICS_OPTIONS': case 'FINISH_LIST_TRACK_GRAPHICS_OPTIONS':
 			case 'NAMESUPER_GRAPHICS-OPTIONS': case 'SCHEDULE_GRAPHICS_OPTIONS': case 'START_LIST_FIELD_GRAPHICS_OPTIONS':
 			case 'L3_MEDAL_TRACK_GRAPHICS_OPTIONS': case 'L3_MEDAL_FIELD_GRAPHICS_OPTIONS':
-			case 'BUG_DESCIPLINE_GRAPHICS_OPTIONS':
+			case 'BUG_DESCIPLINE_GRAPHICS_OPTIONS': case 'FINISH_LIST_FIELD_GRAPHICS_OPTIONS':
 				addItemsToList(whatToProcess,data);
 				match_data = data;
 				break;
 			case 'POPULATE-L3-NAMESUPER': case 'POPULATE-START-LIST-TRACK': case 'POPULATE-FINISH-LIST-TRACK':
 			case 'POPULATE-SCHEDULE': case 'POPULATE-START-LIST-FIELD': case 'POPULATE-L3-MEDAL-TRACK': 
-			case 'POPULATE-L3-MEDAL-FIELD': case 'POPULATE-BUG-DESCIPLINE':
+			case 'POPULATE-L3-MEDAL-FIELD': case 'POPULATE-BUG-DESCIPLINE': case 'POPULATE-FINISH-LIST-FIELD':
 				switch(whatToProcess) {
 				case 'POPULATE-FINISH-LIST-TRACK':
 					if(data.status == 'ERROR') {
@@ -225,7 +234,7 @@ function processAthleticsProcedures(whatToProcess, whichInput)
 						processAthleticsProcedures('ANIMATE-IN-NAMESUPER');
 						break;
 					case 'POPULATE-SCHEDULE': case 'POPULATE-START-LIST-TRACK': case 'POPULATE-FINISH-LIST-TRACK':
-					case 'POPULATE-START-LIST-FIELD':
+					case 'POPULATE-START-LIST-FIELD': case 'POPULATE-FINISH-LIST-FIELD':
 						processAthleticsProcedures('ANIMATE-IN-LINEUP');
 						break;
 					case 'POPULATE-BUG-DESCIPLINE':
@@ -408,6 +417,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 		
 	case 'START_LIST_TRACK_GRAPHICS_OPTIONS': case 'FINISH_LIST_TRACK_GRAPHICS_OPTIONS': case 'START_LIST_FIELD_GRAPHICS_OPTIONS':
 	case 'L3_MEDAL_TRACK_GRAPHICS_OPTIONS': case 'L3_MEDAL_FIELD_GRAPHICS_OPTIONS': case 'BUG_DESCIPLINE_GRAPHICS_OPTIONS':
+	case 'FINISH_LIST_FIELD_GRAPHICS_OPTIONS':
 
 		$('#select_event_div').empty();
 
@@ -427,6 +437,9 @@ function addItemsToList(whatToProcess, dataToProcess)
 		
 		select = document.createElement('select');
 		switch (whatToProcess) {
+		case 'FINISH_LIST_FIELD_GRAPHICS_OPTIONS':
+			select.id = 'selectFinishListField';
+			break;
 		case 'BUG_DESCIPLINE_GRAPHICS_OPTIONS':
 			select.id = 'selectBugDescipline';
 			break;
@@ -445,14 +458,29 @@ function addItemsToList(whatToProcess, dataToProcess)
 			break;
 		}	
 		select.name = select.id;
-		
-		if(dataToProcess.athleteList) {
-			dataToProcess.athleteList.forEach(function(al,index,arr1){
-				option = document.createElement('option');
-				option.value = al.athleteListId;
-				option.text = al.header.split(',')[0] + '.' + al.header.split(',')[1] + '.' + al.header.split(',')[2] + '. ' + al.header.split(',')[3];
-				select.appendChild(option);
-			});
+
+		switch (whatToProcess) {
+		case 'FINISH_LIST_FIELD_GRAPHICS_OPTIONS':
+			if(dataToProcess.filenames) {
+				dataToProcess.filenames.forEach(function(fl,index,arr1){
+					if(fl.includes('.txt')) {
+						option = document.createElement('option');
+						option.value = fl;
+						option.text = fl;
+						select.appendChild(option);
+					}
+				});
+			}
+			break;
+		default:
+			if(dataToProcess.athleteList) {
+				dataToProcess.athleteList.forEach(function(al,index,arr1){
+					option = document.createElement('option');
+					option.value = al.athleteListId;
+					option.text = al.header.split(',')[0] + '.' + al.header.split(',')[1] + '.' + al.header.split(',')[2] + '. ' + al.header.split(',')[3];
+					select.appendChild(option);
+				});
+			}
 		}
 		
 		row.insertCell(0).appendChild(select);
@@ -499,6 +527,10 @@ function addItemsToList(whatToProcess, dataToProcess)
 		option = document.createElement('input');
 	    option.type = 'button';
 		switch (whatToProcess) {
+		case 'FINISH_LIST_FIELD_GRAPHICS_OPTIONS':
+		    option.name = 'populate_finish_list_field_btn';
+			option.value = 'Populate Finish Field';
+			break;
 		case 'BUG_DESCIPLINE_GRAPHICS_OPTIONS':
 		    option.name = 'populate_bug_descipline_btn';
 			option.value = 'Populate Bug Descipline';

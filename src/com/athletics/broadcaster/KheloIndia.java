@@ -53,7 +53,7 @@ public class KheloIndia extends Scene{
 		    populateNameSuper(whatToProcess, print_writer, valueToProcess, athleticsService, match);
 			break;
 		case "POPULATE-START-LIST-TRACK": case "POPULATE-FINISH-LIST-TRACK": case "POPULATE-SCHEDULE":
-		case "POPULATE-START-LIST-FIELD":
+		case "POPULATE-START-LIST-FIELD": case "POPULATE-FINISH-LIST-FIELD": 
 			populateLineUp(whatToProcess,print_writer, match, valueToProcess);
 			break;
 		case "ANIMATE-IN-NAMESUPER": case "ANIMATE-IN-LINEUP": case "ANIMATE-IN-BUG": case "ANIMATE_OUT":
@@ -229,8 +229,51 @@ public class KheloIndia extends Scene{
 				}
 			}
 			break;
+		
+		case "POPULATE-FINISH-LIST-FIELD":
 			
-		case "POPULATE-FINISH-LIST-TRACK":
+			String subheader_text = "";
+			for (AthleteList al : match.getAthleteList()) {
+				
+				for (int i=1; i < al.getHeader().split(",").length-1; i++) {
+					subheader_text = subheader_text + " " + al.getHeader().split(",")[i];
+				}
+				
+				print_writer.println("LAYER1*EVEREST*TREEVIEW*Main*FUNCTION*TAG_CONTROL SET tHeader " 
+						+ al.getHeader().split(",")[0].toUpperCase().trim() + ";");
+				print_writer.println("LAYER1*EVEREST*TREEVIEW*Main*FUNCTION*TAG_CONTROL SET tSubText01 " 
+					+ subheader_text.toUpperCase().trim() + ";");
+				print_writer.println("LAYER1*EVEREST*TREEVIEW*Main*FUNCTION*TAG_CONTROL SET tPTS01 ;");
+				for (int i=0; i < al.getAthletes().size(); i++) {
+					switch (i + 1) {
+					case 1: case 2: case 3: case 4:
+						print_writer.println("LAYER1*EVEREST*TREEVIEW*Main$A$" + (i + 1) + getOrdinalText(i + 1) + "*CONTAINER SET ACTIVE 1;");
+						break;
+					default:
+						print_writer.println("LAYER1*EVEREST*TREEVIEW*Main$B$" + (i + 1) + getOrdinalText(i + 1) + "*CONTAINER SET ACTIVE 1;");
+						break;
+					}
+					print_writer.println("LAYER1*EVEREST*TREEVIEW*Main*FUNCTION*TAG_CONTROL SET tPos" + String.format("%02d",(i + 1)) + " " + (i+1) + ".;");
+					print_writer.println("LAYER1*EVEREST*TREEVIEW*Main*FUNCTION*TAG_CONTROL SET tTeam" + String.format("%02d",(i + 1)) 
+						+ " " + al.getAthletes().get(i).getFullName().toUpperCase()  + ";");
+					print_writer.println("LAYER1*EVEREST*TREEVIEW*Main*FUNCTION*TAG_CONTROL SET tUni" + String.format("%02d",(i + 1)) 
+						+ " " + al.getAthletes().get(i).getTeamname().toUpperCase() + ";");
+					print_writer.println("LAYER1*EVEREST*TREEVIEW*Main*FUNCTION*TAG_CONTROL SET tTime" + String.format("%02d",(i + 1)) + " ;");
+				}
+				for (int i=al.getAthletes().size(); i <= 11; i++) {
+					switch (i + 1) {
+					case 1: case 2: case 3: case 4:
+						print_writer.println("LAYER1*EVEREST*TREEVIEW*Main$A$" + (i + 1) + getOrdinalText(i + 1) + "*CONTAINER SET ACTIVE 0;");
+						break;
+					default:
+						print_writer.println("LAYER1*EVEREST*TREEVIEW*Main$B$" + (i + 1) + getOrdinalText(i + 1) + "*CONTAINER SET ACTIVE 0;");
+						break;
+					}
+				}
+			}
+			break;
+			
+		case "POPULATE-FINISH-LIST-TRACK": 
 			
 			for (AthleteList al : match.getAthleteList()) {
 				print_writer.println("LAYER1*EVEREST*TREEVIEW*Main*FUNCTION*TAG_CONTROL SET tHeader " 

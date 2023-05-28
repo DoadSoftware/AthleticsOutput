@@ -5,9 +5,7 @@ import java.util.List;
 public class AthleteList {
 
   private Integer athleteListId;
-	
   private String header;
-
   private List<Athlete> athletes;
 
 public AthleteList() {

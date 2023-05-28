@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -28,7 +29,6 @@ import com.athletics.model.Configuration;
 import com.athletics.model.Match;
 import com.athletics.service.AthleticsService;
 import com.athletics.util.AthleticsUtil;
-
 import net.sf.json.JSONObject;
 
 @Controller
@@ -46,6 +46,7 @@ public class IndexController
 	public static Scene session_scene;
 	public static String sessionEventsNetworkDirectory;
 	public static List<AthleteList> atheletesList = new ArrayList<AthleteList>(); 
+	public static List<String> filenames;
 	
 	@RequestMapping(value = {"/","/initialise"}, method={RequestMethod.GET,RequestMethod.POST}) 
 	public String initialisePage(ModelMap model)
@@ -110,6 +111,17 @@ public class IndexController
 			session_match.setSchedules(athleticsService.getSchedules());
 			return JSONObject.fromObject(session_match).toString();
 		
+		case "FINISH_LIST_FIELD_GRAPHICS_OPTIONS":
+			
+			List<String> filenames = Files.list(Paths.get(AthleticsUtil.SPORTS_DIRECTORY + AthleticsUtil.ATHLETICS_DIRECTORY
+					+ AthleticsUtil.SPREADSHEETS_DIRECTORY))
+			    .filter(Files::isRegularFile)
+			    .map(p -> p.getFileName().toString())
+			    .collect(Collectors.toList());
+			
+			session_match.setFilenames(filenames);
+			return JSONObject.fromObject(session_match).toString();
+			
 		case "START_LIST_FIELD_GRAPHICS_OPTIONS": case "L3_MEDAL_TRACK_GRAPHICS_OPTIONS": case "L3_MEDAL_FIELD_GRAPHICS_OPTIONS":
 		case "START_LIST_TRACK_GRAPHICS_OPTIONS": case "FINISH_LIST_TRACK_GRAPHICS_OPTIONS": case "BUG_DESCIPLINE_GRAPHICS_OPTIONS":
 			
@@ -177,9 +189,35 @@ public class IndexController
 			
 		case "POPULATE-L3-NAMESUPER": case "POPULATE-START-LIST-TRACK": case "POPULATE-FINISH-LIST-TRACK":
 		case "POPULATE-SCHEDULE": case "POPULATE-START-LIST-FIELD": case "POPULATE-L3-MEDAL-TRACK": 
-		case "POPULATE-L3-MEDAL-FIELD": case "POPULATE-BUG-DESCIPLINE":
+		case "POPULATE-L3-MEDAL-FIELD": case "POPULATE-BUG-DESCIPLINE": case "POPULATE-FINISH-LIST-FIELD":
 			
 			switch (whatToProcess) {
+			case "POPULATE-FINISH-LIST-FIELD":
+				
+				fileLines = Files.readAllLines(Paths.get(AthleticsUtil.SPORTS_DIRECTORY + AthleticsUtil.ATHLETICS_DIRECTORY 
+						+ AthleticsUtil.SPREADSHEETS_DIRECTORY + valueToProcess.split(",")[1]));
+				atheletesList = new ArrayList<AthleteList>();
+				atheletesList.add(new AthleteList());
+				athletes = new ArrayList<Athlete>();
+				for (int i=0; i<=fileLines.size()-1; i++) {
+					if(fileLines.get(i).contains("=")) {
+						if(atheletesList.get(0).getHeader() != null) {
+							atheletesList.get(0).setHeader(atheletesList.get(0).getHeader() + "," + fileLines.get(i).split("=")[1]);
+						} else {
+							atheletesList.get(0).setHeader(fileLines.get(i).split("=")[1]);
+						}
+					} else {
+						athletes.add(new Athlete(Integer.valueOf(fileLines.get(i).split(",")[0]), 
+								fileLines.get(i).split(",")[2], fileLines.get(i).split(",")[1]));
+					}
+				}
+				if(athletes.size() > 0) {
+					atheletesList.get(atheletesList.size()-1).setAthletes(athletes);
+				}
+				session_match.setAthleteList(atheletesList);
+				System.out.println("athlete list = " + atheletesList);
+				break;
+				
 			case "POPULATE-FINISH-LIST-TRACK":
 				
 				AthleteList this_athlete_list = session_match.getAthleteList().stream().filter(
@@ -189,6 +227,7 @@ public class IndexController
 				athletes = new ArrayList<Athlete>();
 				
 				if(this_athlete_list != null) {
+					
 					if (sessionEventsNetworkDirectory != null && !sessionEventsNetworkDirectory.trim().isEmpty()) {
 						
 						file_name = String.format("%03d", Integer.valueOf(this_athlete_list.getHeader().split(",")[0])) 

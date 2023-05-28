@@ -36,6 +36,13 @@ public Athlete(int athleteId, String surname, String fullName, String teamname) 
 	this.teamname = teamname;
 }
 
+public Athlete(int athleteId, String fullName, String teamname) {
+	super();
+	this.athleteId = athleteId;
+	this.fullName = fullName;
+	this.teamname = teamname;
+}
+
 public Athlete(int athleteId, String surname, String fullName, String teamname, String stats) {
 	super();
 	this.athleteId = athleteId;

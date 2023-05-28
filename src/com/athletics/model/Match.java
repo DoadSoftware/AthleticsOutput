@@ -8,9 +8,18 @@ public class Match {
   private List<NameSuper> nameSuper;
   private List<Schedule> schedules;
   private List<AthleteList> athleteList;
+  List<String> filenames;
   
 public String getStatus() {
 	return status;
+}
+
+public List<String> getFilenames() {
+	return filenames;
+}
+
+public void setFilenames(List<String> filenames) {
+	this.filenames = filenames;
 }
 
 public void setStatus(String status) {

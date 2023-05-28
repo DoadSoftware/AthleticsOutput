@@ -54,6 +54,9 @@
 						  		name="start_list_field_graphic_btn" id="start_list_field_graphic_btn" 
 						  		onclick="processUserSelection(this);">Start List FIELD</button>
 						    <button style="background-color:#2E008B;color:#FEFEFE;" class="btn btn-sm" type="button"
+						  		name="finish_list_field_graphic_btn" id="finish_list_field_graphic_btn" 
+						  		onclick="processUserSelection(this);">Finish List FIELD</button>
+						    <button style="background-color:#2E008B;color:#FEFEFE;" class="btn btn-sm" type="button"
 						  		name="l3_medal_track_graphic_btn" id="l3_medal_track_graphic_btn" 
 						  		onclick="processUserSelection(this);">L3 Medal TRACK</button>
 						    <button style="background-color:#2E008B;color:#FEFEFE;" class="btn btn-sm" type="button"
