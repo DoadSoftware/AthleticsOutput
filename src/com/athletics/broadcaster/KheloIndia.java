@@ -394,10 +394,12 @@ public class KheloIndia extends Scene{
 			for (NameSuper ns : athleticsService.getNameSupers()) {
 				if(ns.getNamesuperId() == Integer.valueOf(valueToProcess.split(",")[1])) {
 					name = ns.getFirstname().toUpperCase().trim();
-					if(!name.trim().isEmpty()) {
-						name = name + " " + ns.getSurname().toUpperCase().trim();
-					} else {
-						name = ns.getSurname().toUpperCase().trim();
+					if(ns.getSurname() != null) {
+						if(!name.trim().isEmpty()) {
+							name = name + " " + ns.getSurname().toUpperCase().trim();
+						} else {
+							name = ns.getSurname().toUpperCase().trim();
+						}
 					}
 					print_writer.println("LAYER1*EVEREST*TREEVIEW*Main*FUNCTION*TAG_CONTROL SET tName " + name +";");
 					if(ns.getSubHeader() != null) {
