@@ -1,29 +1,21 @@
 package com.athletics.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
 
-@XmlRootElement(name="Athlete")
-@XmlAccessorType(XmlAccessType.FIELD)
 public class Athlete {
 
-  @XmlElement(name = "athleteId")
   private int athleteId;
 
-  @XmlElement(name = "surname")
   private String surname;
 
-  @XmlElement(name = "fullName")
   private String fullName;
 
-  @XmlElement(name = "teamname")
   private String teamname;
   
-  @XmlElement(name = "stats")
   private String stats;
-
+  
+  private List<Stat> attempts_results;
+  
 public Athlete() {
 	super();
 }
@@ -36,11 +28,27 @@ public Athlete(int athleteId, String surname, String fullName, String teamname) 
 	this.teamname = teamname;
 }
 
+public List<Stat> getAttempts_results() {
+	return attempts_results;
+}
+
+public void setAttempts_results(List<Stat> attempts_results) {
+	this.attempts_results = attempts_results;
+}
+
 public Athlete(int athleteId, String fullName, String teamname) {
 	super();
 	this.athleteId = athleteId;
 	this.fullName = fullName;
 	this.teamname = teamname;
+}
+
+public Athlete(String fullName, String teamname, String stats, int athleteId) {
+	super();
+	this.fullName = fullName;
+	this.teamname = teamname;
+	this.stats = stats;
+	this.athleteId = athleteId;
 }
 
 public Athlete(int athleteId, String surname, String fullName, String teamname, String stats) {
@@ -95,7 +103,7 @@ public void setStats(String stats) {
 @Override
 public String toString() {
 	return "Athlete [athleteId=" + athleteId + ", surname=" + surname + ", fullName=" + fullName + ", teamname="
-			+ teamname + ", stats=" + stats + "]";
+			+ teamname + ", stats=" + stats + ", attempts_results=" + attempts_results + "]";
 }
 
 }

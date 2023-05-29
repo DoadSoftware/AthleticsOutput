@@ -82,7 +82,10 @@ function processUserSelection(whichInput,dataToProcess)
 	case 'finish_list_field_graphic_btn':
 		processAthleticsProcedures('FINISH_LIST_FIELD_GRAPHICS_OPTIONS');
 		break;
-	case 'selectL3MedalFileOption':
+	case 'selectL3FieldAttempts':
+		processAthleticsProcedures('L3_FIELD_ATTEMPTS_PLAYERS_OPTIONS');
+		break;
+	case 'selectL3MedalFileOption': 
 		addItemsToList('LOAD_TRACK_FIELD_PLAYERS',match_data);
 		break;
 	case 'selectMorningOrEvening':
@@ -94,6 +97,9 @@ function processUserSelection(whichInput,dataToProcess)
 		break;
 	case 'animate_out_graphic_btn':
 		processAthleticsProcedures('ANIMATE_OUT');
+		break;
+	case 'l3_field_attempts_btn':
+		processAthleticsProcedures('L3_FIELD_ATTEMPTS_GRAPHICS_OPTIONS');
 		break;
 	case 'bug_free_text_btn':
 		processAthleticsProcedures('BUG_FREE_TEXT_GRAPHICS_OPTIONS');
@@ -112,6 +118,9 @@ function processUserSelection(whichInput,dataToProcess)
 		break;
 	case 'populate_bug_descipline_btn':
 		processAthleticsProcedures('POPULATE-BUG-DESCIPLINE');
+		break;
+	case 'populate_l3_field_Attempts_btn':
+		processAthleticsProcedures('POPULATE-L3-FIELD-ATTEMPTS');
 		break;
 	case 'populate_l3_medal_track_btn':
 		processAthleticsProcedures('POPULATE-L3-MEDAL-TRACK');
@@ -198,6 +207,10 @@ function processAthleticsProcedures(whatToProcess, whichInput)
 			+ ',' + $('#selectL3MedalPlayer option:selected').val() 
 			+ ',' + $('#selectL3MedalIcon option:selected').val();
 		break;
+	case 'POPULATE-L3-FIELD-ATTEMPTS': case 'L3_FIELD_ATTEMPTS_PLAYERS_OPTIONS':
+		valueToProcess = 'LT_Vault_Hjump_Throws.sum' + ',' + $('#selectL3FieldAttempts option:selected').val()
+			+ ',' + $('#selectL3MedalPlayer option:selected').val();
+		break;
 	case 'POPULATE-FINISH-LIST-FIELD':
 		valueToProcess = 'FF_Athletics_Standing.sum' + ',' + $('#selectFinishListField option:selected').val();
 		break;
@@ -221,16 +234,16 @@ function processAthleticsProcedures(whatToProcess, whichInput)
         	switch(whatToProcess) {
 			case 'START_LIST_TRACK_GRAPHICS_OPTIONS': case 'FINISH_LIST_TRACK_GRAPHICS_OPTIONS':
 			case 'NAMESUPER_GRAPHICS-OPTIONS': case 'SCHEDULE_GRAPHICS_OPTIONS': case 'START_LIST_FIELD_GRAPHICS_OPTIONS':
-			case 'L3_MEDAL_TRACK_GRAPHICS_OPTIONS': case 'L3_MEDAL_FIELD_GRAPHICS_OPTIONS':
-			case 'BUG_DESCIPLINE_GRAPHICS_OPTIONS': case 'FINISH_LIST_FIELD_GRAPHICS_OPTIONS':
-			case 'BUG_FREE_TEXT_GRAPHICS_OPTIONS':
+			case 'L3_MEDAL_TRACK_GRAPHICS_OPTIONS': case 'L3_MEDAL_FIELD_GRAPHICS_OPTIONS': case 'BUG_DESCIPLINE_GRAPHICS_OPTIONS': 
+			case 'FINISH_LIST_FIELD_GRAPHICS_OPTIONS': case 'BUG_FREE_TEXT_GRAPHICS_OPTIONS': case 'L3_FIELD_ATTEMPTS_GRAPHICS_OPTIONS': 
+			case 'L3_FIELD_ATTEMPTS_PLAYERS_OPTIONS':
 				addItemsToList(whatToProcess,data);
 				match_data = data;
 				break;
 			case 'POPULATE-L3-NAMESUPER': case 'POPULATE-START-LIST-TRACK': case 'POPULATE-FINISH-LIST-TRACK':
 			case 'POPULATE-SCHEDULE': case 'POPULATE-START-LIST-FIELD': case 'POPULATE-L3-MEDAL-TRACK': 
 			case 'POPULATE-L3-MEDAL-FIELD': case 'POPULATE-BUG-DESCIPLINE': case 'POPULATE-FINISH-LIST-FIELD':
-			case 'POPULATE-BUG-FREE-TEXT':
+			case 'POPULATE-BUG-FREE-TEXT': case 'POPULATE-L3-FIELD-ATTEMPTS':
 				switch(whatToProcess) {
 				case 'POPULATE-FINISH-LIST-TRACK':
 					if(data.status == 'ERROR') {
@@ -242,6 +255,7 @@ function processAthleticsProcedures(whatToProcess, whichInput)
 				if(confirm('Animate In?') == true){
 		        	switch(whatToProcess) {
 					case 'POPULATE-L3-NAMESUPER': case 'POPULATE-L3-MEDAL-TRACK': case 'POPULATE-L3-MEDAL-FIELD':
+					case 'POPULATE-L3-FIELD-ATTEMPTS':
 						processAthleticsProcedures('ANIMATE-IN-NAMESUPER');
 						break;
 					case 'POPULATE-SCHEDULE': case 'POPULATE-START-LIST-TRACK': case 'POPULATE-FINISH-LIST-TRACK':
@@ -407,13 +421,30 @@ function addItemsToList(whatToProcess, dataToProcess)
 		
 		break;
 	
-	case 'LOAD_TRACK_FIELD_PLAYERS':
+	case 'L3_FIELD_ATTEMPTS_PLAYERS_OPTIONS':
 
 		$('#selectL3MedalPlayer').empty();
 
 		select = document.getElementById('selectL3MedalPlayer');
 
-		dataToProcess.athleteList.forEach(function(al,index,arr1){
+		dataToProcess.athleteList.forEach(function(al,index,arr1){ 
+			al.athletes.forEach(function(plyr,index,arr1){
+				option = document.createElement('option');
+				option.value = plyr.athleteId;
+				option.text = plyr.fullName;
+				select.appendChild(option);
+			});
+		});
+		
+		break;
+	
+	case 'LOAD_TRACK_FIELD_PLAYERS': 
+
+		$('#selectL3MedalPlayer').empty();
+
+		select = document.getElementById('selectL3MedalPlayer');
+
+		dataToProcess.athleteList.forEach(function(al,index,arr1){ //selectL3FieldAttempts
 			if(al.athleteListId == $('#selectL3MedalFileOption option:selected').val()) {
 				al.athletes.forEach(function(plyr,index,arr1){
 					option = document.createElement('option');
@@ -428,7 +459,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 		
 	case 'START_LIST_TRACK_GRAPHICS_OPTIONS': case 'FINISH_LIST_TRACK_GRAPHICS_OPTIONS': case 'START_LIST_FIELD_GRAPHICS_OPTIONS':
 	case 'L3_MEDAL_TRACK_GRAPHICS_OPTIONS': case 'L3_MEDAL_FIELD_GRAPHICS_OPTIONS': case 'BUG_DESCIPLINE_GRAPHICS_OPTIONS':
-	case 'FINISH_LIST_FIELD_GRAPHICS_OPTIONS': case 'BUG_FREE_TEXT_GRAPHICS_OPTIONS':
+	case 'FINISH_LIST_FIELD_GRAPHICS_OPTIONS': case 'BUG_FREE_TEXT_GRAPHICS_OPTIONS': case 'L3_FIELD_ATTEMPTS_GRAPHICS_OPTIONS':
 
 		$('#select_event_div').empty();
 
@@ -450,6 +481,10 @@ function addItemsToList(whatToProcess, dataToProcess)
 		switch (whatToProcess) {
 		case 'BUG_FREE_TEXT_GRAPHICS_OPTIONS':
 			select.id = 'selectBugFreeText';
+			break;
+		case 'L3_FIELD_ATTEMPTS_GRAPHICS_OPTIONS':
+			select.id = 'selectL3FieldAttempts';
+			select.setAttribute('onchange',"processUserSelection(this)");
 			break;
 		case 'FINISH_LIST_FIELD_GRAPHICS_OPTIONS':
 			select.id = 'selectFinishListField';
@@ -474,11 +509,11 @@ function addItemsToList(whatToProcess, dataToProcess)
 		select.name = select.id;
 
 		switch (whatToProcess) {
-		case 'FINISH_LIST_FIELD_GRAPHICS_OPTIONS': case 'BUG_FREE_TEXT_GRAPHICS_OPTIONS':
+		case 'FINISH_LIST_FIELD_GRAPHICS_OPTIONS': case 'BUG_FREE_TEXT_GRAPHICS_OPTIONS': case 'L3_FIELD_ATTEMPTS_GRAPHICS_OPTIONS':
 			if(dataToProcess.filenames) {
 				dataToProcess.filenames.forEach(function(fl,index,arr1){
 					switch (whatToProcess) {
-					case 'FINISH_LIST_FIELD_GRAPHICS_OPTIONS': 
+					case 'FINISH_LIST_FIELD_GRAPHICS_OPTIONS': case 'L3_FIELD_ATTEMPTS_GRAPHICS_OPTIONS':
 						if(fl.includes('.txt')) {
 							option = document.createElement('option');
 							option.value = fl;
@@ -508,7 +543,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 		
 		row.insertCell(0).appendChild(select);
 		switch (whatToProcess) {
-		case 'L3_MEDAL_TRACK_GRAPHICS_OPTIONS': case 'L3_MEDAL_FIELD_GRAPHICS_OPTIONS':
+		case 'L3_MEDAL_TRACK_GRAPHICS_OPTIONS': case 'L3_MEDAL_FIELD_GRAPHICS_OPTIONS': case 'L3_FIELD_ATTEMPTS_GRAPHICS_OPTIONS':
 
 			header_text = document.createElement('h6');
 			header_text.innerHTML = 'Select Player';
@@ -517,39 +552,45 @@ function addItemsToList(whatToProcess, dataToProcess)
 
 			row.insertCell(1).appendChild(header_text).appendChild(select);
 
-			header_text = document.createElement('h6');
-			header_text.innerHTML = 'Select Medal';
-			select = document.createElement('select');
-			select.id = 'selectL3MedalIcon';
-
-			option = document.createElement('option');
-			option.value = 'none';
-			option.text = 'None';
-			select.appendChild(option);
-
-			option = document.createElement('option');
-			option.value = 'gold';
-			option.text = 'Gold';
-			select.appendChild(option);
-
-			option = document.createElement('option');
-			option.value = 'silver';
-			option.text = 'Silver';
-			select.appendChild(option);
-
-			option = document.createElement('option');
-			option.value = 'bronze';
-			option.text = 'Bronze';
-			select.appendChild(option);
-
-			row.insertCell(2).appendChild(header_text).appendChild(select);
-
+			switch (whatToProcess) {
+			case 'L3_MEDAL_TRACK_GRAPHICS_OPTIONS': case 'L3_MEDAL_FIELD_GRAPHICS_OPTIONS': 
+				header_text = document.createElement('h6');
+				header_text.innerHTML = 'Select Medal';
+				select = document.createElement('select');
+				select.id = 'selectL3MedalIcon';
+	
+				option = document.createElement('option');
+				option.value = 'none';
+				option.text = 'None';
+				select.appendChild(option);
+	
+				option = document.createElement('option');
+				option.value = 'gold';
+				option.text = 'Gold';
+				select.appendChild(option);
+	
+				option = document.createElement('option');
+				option.value = 'silver';
+				option.text = 'Silver';
+				select.appendChild(option);
+	
+				option = document.createElement('option');
+				option.value = 'bronze';
+				option.text = 'Bronze';
+				select.appendChild(option);
+	
+				row.insertCell(2).appendChild(header_text).appendChild(select);
+			}
 			break;
 		}	
 
 		option = document.createElement('input');
 	    option.type = 'button';
 		switch (whatToProcess) {
+		case 'L3_FIELD_ATTEMPTS_GRAPHICS_OPTIONS': 
+		    option.name = 'populate_l3_field_Attempts_btn';
+			option.value = 'Populate Finish Field';
+			break;
 		case 'BUG_FREE_TEXT_GRAPHICS_OPTIONS':
 		    option.name = 'populate_bug_free_text_btn';
 			option.value = 'Populate Bug Free Text';
@@ -602,6 +643,9 @@ function addItemsToList(whatToProcess, dataToProcess)
 		switch (whatToProcess) {
 		case 'L3_MEDAL_TRACK_GRAPHICS_OPTIONS': case 'L3_MEDAL_FIELD_GRAPHICS_OPTIONS':
 		    row.insertCell(3).appendChild(div);
+			break;
+		case 'L3_FIELD_ATTEMPTS_GRAPHICS_OPTIONS': 
+		    row.insertCell(2).appendChild(div);
 			break;
 		default:
 		    row.insertCell(1).appendChild(div);

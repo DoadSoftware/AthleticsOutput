@@ -21,6 +21,7 @@ public class KheloIndia extends Scene{
 	private String icon_path = "D:\\Everest_Khelo_India_2023\\Icons\\";
 	private int container_id = 0;
 	public AthleteList athleteList = null;
+	public Athlete athlete = null;
 	
 	public KheloIndia() {
 		super();
@@ -49,7 +50,7 @@ public class KheloIndia extends Scene{
 		case "POPULATE-BUG-DESCIPLINE": case "POPULATE-BUG-FREE-TEXT":
 		    populateBug(whatToProcess, print_writer, match, valueToProcess);
 			break;
-		case "POPULATE-L3-NAMESUPER": case "POPULATE-L3-MEDAL-TRACK": case "POPULATE-L3-MEDAL-FIELD":
+		case "POPULATE-L3-NAMESUPER": case "POPULATE-L3-MEDAL-TRACK": case "POPULATE-L3-MEDAL-FIELD":case "POPULATE-L3-FIELD-ATTEMPTS":
 		    populateNameSuper(whatToProcess, print_writer, valueToProcess, athleticsService, match);
 			break;
 		case "POPULATE-START-LIST-TRACK": case "POPULATE-FINISH-LIST-TRACK": case "POPULATE-SCHEDULE":
@@ -273,7 +274,9 @@ public class KheloIndia extends Scene{
 						+ " " + al.getAthletes().get(i).getFullName().toUpperCase()  + ";");
 					print_writer.println("LAYER1*EVEREST*TREEVIEW*Main*FUNCTION*TAG_CONTROL SET tUni" + String.format("%02d",(i + 1)) 
 						+ " " + al.getAthletes().get(i).getTeamname().toUpperCase() + ";");
-					print_writer.println("LAYER1*EVEREST*TREEVIEW*Main*FUNCTION*TAG_CONTROL SET tTime" + String.format("%02d",(i + 1)) + " ;");
+					print_writer.println("LAYER1*EVEREST*TREEVIEW*Main*FUNCTION*TAG_CONTROL SET tTime" + String.format("%02d",(i + 1)) 
+						+ " " + al.getAthletes().get(i).getStats().toUpperCase().trim() 
+						+ al.getHeader().split(",")[al.getHeader().split(",").length-1].toLowerCase() + ";");
 				}
 				for (int i=al.getAthletes().size(); i <= 11; i++) {
 					switch (i + 1) {
@@ -342,12 +345,56 @@ public class KheloIndia extends Scene{
 		
 		this.status = "SUCCESS";	
 	}	
+	
 	public void populateNameSuper(String whatToProcess, PrintWriter print_writer,String valueToProcess, 
 			AthleticsService athleticsService, Match match) throws InterruptedException
 	{
 		String name = "";
 		
 		switch (whatToProcess.toUpperCase()) {
+		case "POPULATE-L3-FIELD-ATTEMPTS":
+			
+			print_writer.println("LAYER1*EVEREST*TREEVIEW*Main*FUNCTION*TAG_CONTROL SET lgIcon " + icon_path 
+					+ "Athletics" + AthleticsUtil.PNG_EXTENSION + ";");
+			athlete = match.getAthleteList().get(0).getAthletes().stream().filter(
+					ath -> ath.getAthleteId() == Integer.valueOf(valueToProcess.split(",")[2])).findAny().orElse(null);
+			if(athlete != null) {
+				for(int i=0; i < match.getAthleteList().get(0).getHeader().split(",").length-1; i++) {
+					name = name + " " + match.getAthleteList().get(0).getHeader().split(",")[i].toUpperCase();
+				}
+				print_writer.println("LAYER1*EVEREST*TREEVIEW*Main*FUNCTION*TAG_CONTROL SET tName " + athlete.getFullName().toUpperCase().trim() +";");
+				print_writer.println("LAYER1*EVEREST*TREEVIEW*Main*FUNCTION*TAG_CONTROL SET tSubInfo " +athlete.getTeamname().toUpperCase().trim() + ";");
+				print_writer.println("LAYER1*EVEREST*TREEVIEW*Main*FUNCTION*TAG_CONTROL SET tSubInfo02 " 
+					+ name.toUpperCase().trim() + ";");
+				if(valueToProcess.split(",")[1].equalsIgnoreCase("AthleticsPvHj.txt")) {
+					for(int i=0; i< athlete.getAttempts_results().size(); i++) {
+						print_writer.println("LAYER1*EVEREST*TREEVIEW*Main$BottomGrp$" + (i + 1) + getOrdinalText(i + 1) + "*CONTAINER SET ACTIVE 1;");
+						print_writer.println("LAYER1*EVEREST*TREEVIEW*Main*FUNCTION*TAG_CONTROL SET tAtHead" + String.format("%02d",(i + 1)) 
+							+ " " + athlete.getAttempts_results().get(i).getAttempt().toUpperCase().trim() 
+							+ match.getAthleteList().get(0).getHeader().split(",")[
+							match.getAthleteList().get(0).getHeader().split(",").length-1].toLowerCase() + ";");
+						print_writer.println("LAYER1*EVEREST*TREEVIEW*Main*FUNCTION*TAG_CONTROL SET tAtData" + String.format("%02d",(i + 1)) 
+							+ " " + athlete.getAttempts_results().get(i).getFirstResult().toUpperCase().trim() 
+							+ " " + athlete.getAttempts_results().get(i).getSecondResult().toUpperCase().trim() 
+							+ " " + athlete.getAttempts_results().get(i).getThirdResult().toUpperCase().trim() + ";");
+					}
+				}else if(valueToProcess.split(",")[1].equalsIgnoreCase("AthleticsThrows.txt")) {
+					for(int i=0; i< athlete.getAttempts_results().size(); i++) {
+						print_writer.println("LAYER1*EVEREST*TREEVIEW*Main$BottomGrp$" + (i + 1) + getOrdinalText(i + 1) + "*CONTAINER SET ACTIVE 1;");
+						print_writer.println("LAYER1*EVEREST*TREEVIEW*Main*FUNCTION*TAG_CONTROL SET tAtHead" + String.format("%02d",(i + 1)) 
+							+ " ATTEMPT " + (i + 1)  + ";");
+						print_writer.println("LAYER1*EVEREST*TREEVIEW*Main*FUNCTION*TAG_CONTROL SET tAtData" + String.format("%02d",(i + 1)) 
+							+ " " + athlete.getAttempts_results().get(i).getAttempt().toUpperCase().trim() + 
+							match.getAthleteList().get(0).getHeader().split(",")[
+							match.getAthleteList().get(0).getHeader().split(",").length-1].toLowerCase()+ ";");
+					}
+				}
+				for(int i=athlete.getAttempts_results().size()+1; i<=6; i++) {
+					print_writer.println("LAYER1*EVEREST*TREEVIEW*Main$BottomGrp$" + (i) + getOrdinalText(i) + "*CONTAINER SET ACTIVE 0;");
+				}
+			}
+			break;
+			
 		case "POPULATE-L3-MEDAL-TRACK": case "POPULATE-L3-MEDAL-FIELD":
 			
 			if(valueToProcess.split(",")[3].equalsIgnoreCase("NONE")) {

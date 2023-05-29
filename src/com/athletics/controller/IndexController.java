@@ -27,6 +27,7 @@ import com.athletics.model.Athlete;
 import com.athletics.model.AthleteList;
 import com.athletics.model.Configuration;
 import com.athletics.model.Match;
+import com.athletics.model.Stat;
 import com.athletics.service.AthleticsService;
 import com.athletics.util.AthleticsUtil;
 import net.sf.json.JSONObject;
@@ -103,6 +104,7 @@ public class IndexController
 	{	
 		List<String> fileLines = null;
 		List<Athlete> athletes;
+		List<Stat> attempts_results;
 		String file_name = "";
 		
 		switch (whatToProcess) {
@@ -119,7 +121,7 @@ public class IndexController
 			session_match.setSchedules(athleticsService.getSchedules());
 			return JSONObject.fromObject(session_match).toString();
 		
-		case "FINISH_LIST_FIELD_GRAPHICS_OPTIONS":
+		case "FINISH_LIST_FIELD_GRAPHICS_OPTIONS": case "L3_FIELD_ATTEMPTS_GRAPHICS_OPTIONS":
 			
 			List<String> filenames = Files.list(Paths.get(AthleticsUtil.SPORTS_DIRECTORY + AthleticsUtil.ATHLETICS_DIRECTORY
 					+ AthleticsUtil.SPREADSHEETS_DIRECTORY))
@@ -198,11 +200,12 @@ public class IndexController
 		case "POPULATE-L3-NAMESUPER": case "POPULATE-START-LIST-TRACK": case "POPULATE-FINISH-LIST-TRACK":
 		case "POPULATE-SCHEDULE": case "POPULATE-START-LIST-FIELD": case "POPULATE-L3-MEDAL-TRACK": 
 		case "POPULATE-L3-MEDAL-FIELD": case "POPULATE-BUG-DESCIPLINE": case "POPULATE-FINISH-LIST-FIELD":
-		case "POPULATE-BUG-FREE-TEXT":
+		case "POPULATE-BUG-FREE-TEXT": case "L3_FIELD_ATTEMPTS_PLAYERS_OPTIONS": case "POPULATE-L3-FIELD-ATTEMPTS":
 			
 			switch (whatToProcess) {
-			case "POPULATE-FINISH-LIST-FIELD":
+			case "POPULATE-FINISH-LIST-FIELD": case "L3_FIELD_ATTEMPTS_PLAYERS_OPTIONS":
 				
+				attempts_results = new ArrayList<Stat>();
 				fileLines = Files.readAllLines(Paths.get(AthleticsUtil.SPORTS_DIRECTORY + AthleticsUtil.ATHLETICS_DIRECTORY 
 						+ AthleticsUtil.SPREADSHEETS_DIRECTORY + valueToProcess.split(",")[1]));
 				atheletesList = new ArrayList<AthleteList>();
@@ -216,8 +219,39 @@ public class IndexController
 							atheletesList.get(0).setHeader(fileLines.get(i).split("=")[1]);
 						}
 					} else {
-						athletes.add(new Athlete(Integer.valueOf(fileLines.get(i).split(",")[0]), 
-								fileLines.get(i).split(",")[2], fileLines.get(i).split(",")[1]));
+						athletes.add(new Athlete(fileLines.get(i).split(",")[2], 
+							fileLines.get(i).split(",")[1], fileLines.get(i).split(",")[3],
+							Integer.valueOf(fileLines.get(i).split(",")[0])));
+						switch (whatToProcess) {
+						case "L3_FIELD_ATTEMPTS_PLAYERS_OPTIONS":
+							attempts_results = new ArrayList<Stat>();
+							if(valueToProcess.split(",")[1].equalsIgnoreCase("AthleticsPvHj.txt")) {
+								for(int j=4; j<fileLines.get(i).split(",").length; j++) {
+									if(j+3 < fileLines.get(i).split(",").length) {
+										attempts_results.add(new Stat(attempts_results.size()+1, fileLines.get(i).split(",")[j]
+												, fileLines.get(i).split(",")[j+1], fileLines.get(i).split(",")[j+2], 
+												fileLines.get(i).split(",")[j+3]));
+									} else if(j+2 < fileLines.get(i).split(",").length) {
+										attempts_results.add(new Stat(attempts_results.size()+1, fileLines.get(i).split(",")[j]
+												, fileLines.get(i).split(",")[j+1], fileLines.get(i).split(",")[j+2],""));
+									} else if(j+1 < fileLines.get(i).split(",").length) {
+										attempts_results.add(new Stat(attempts_results.size()+1, fileLines.get(i).split(",")[j]
+												, fileLines.get(i).split(",")[j+1], "",""));
+									} else {
+										attempts_results.add(new Stat(attempts_results.size()+1, fileLines.get(i).split(",")[j], "", "",""));
+									}
+									j = j + 3;
+								}
+							}else if(valueToProcess.split(",")[1].equalsIgnoreCase("AthleticsThrows.txt")) {
+								for(int j=4; j<fileLines.get(i).split(",").length; j++) {
+									attempts_results.add(new Stat(attempts_results.size()+1, fileLines.get(i).split(",")[j]));
+								}
+							}
+							if(attempts_results.size() > 0) {
+								athletes.get(athletes.size()-1).setAttempts_results(attempts_results);
+							}
+							break;
+						}
 					}
 				}
 				if(athletes.size() > 0) {
@@ -225,6 +259,10 @@ public class IndexController
 				}
 				session_match.setAthleteList(atheletesList);
 				System.out.println("athlete list = " + atheletesList);
+				switch (whatToProcess) {
+				case "L3_FIELD_ATTEMPTS_PLAYERS_OPTIONS":
+					return JSONObject.fromObject(session_match).toString();
+				}
 				break;
 				
 			case "POPULATE-FINISH-LIST-TRACK":

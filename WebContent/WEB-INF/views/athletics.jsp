@@ -68,6 +68,9 @@
 						    <button style="background-color:#2E008B;color:#FEFEFE;" class="btn btn-sm" type="button"
 						  		name="bug_free_text_btn" id="bug_free_text_btn" 
 						  		onclick="processUserSelection(this);">Bug Free Text</button>
+						    <button style="background-color:#2E008B;color:#FEFEFE;" class="btn btn-sm" type="button"
+						  		name="l3_field_attempts_btn" id="l3_field_attempts_btn" 
+						  		onclick="processUserSelection(this);">L3 Field Attempts</button>
 						    <button style="background-color:yellow;color:red;" class="btn btn-sm" type="button"
 						  		name="animate_out_graphic_btn" id="animate_out_graphic_btn" 
 						  		onclick="processUserSelection(this);">Animate Out</button>
