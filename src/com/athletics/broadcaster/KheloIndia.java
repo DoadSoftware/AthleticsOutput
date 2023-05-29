@@ -60,7 +60,14 @@ public class KheloIndia extends Scene{
 			
 			switch (whatToProcess.toUpperCase()) {
 			case "ANIMATE_OUT":
-				processAnimation(print_writer, "In", "CONTINUE", session_selected_broadcaster,1);
+				switch (which_graphics_onscreen.toUpperCase()) {
+				case "L3-NAMESUPER": case "BUG":
+					processAnimation(print_writer, "Out", "START", session_selected_broadcaster,1);
+					break;
+				default:
+					processAnimation(print_writer, "In", "CONTINUE", session_selected_broadcaster,1);
+					break;
+				}
 				break;
 			default:
 				processAnimation(print_writer, "In", "START", session_selected_broadcaster,1);
