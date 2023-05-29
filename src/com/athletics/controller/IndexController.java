@@ -106,6 +106,14 @@ public class IndexController
 		String file_name = "";
 		
 		switch (whatToProcess) {
+		case "BUG_FREE_TEXT_GRAPHICS_OPTIONS":
+			
+			fileLines = Files.readAllLines(Paths.get(AthleticsUtil.SPORTS_DIRECTORY + AthleticsUtil.ATHLETICS_DIRECTORY 
+					+ AthleticsUtil.BUGS_TXT));
+			
+			session_match.setFilenames(fileLines);
+			return JSONObject.fromObject(session_match).toString();
+			
 		case "SCHEDULE_GRAPHICS_OPTIONS":
 			
 			session_match.setSchedules(athleticsService.getSchedules());
@@ -190,6 +198,7 @@ public class IndexController
 		case "POPULATE-L3-NAMESUPER": case "POPULATE-START-LIST-TRACK": case "POPULATE-FINISH-LIST-TRACK":
 		case "POPULATE-SCHEDULE": case "POPULATE-START-LIST-FIELD": case "POPULATE-L3-MEDAL-TRACK": 
 		case "POPULATE-L3-MEDAL-FIELD": case "POPULATE-BUG-DESCIPLINE": case "POPULATE-FINISH-LIST-FIELD":
+		case "POPULATE-BUG-FREE-TEXT":
 			
 			switch (whatToProcess) {
 			case "POPULATE-FINISH-LIST-FIELD":

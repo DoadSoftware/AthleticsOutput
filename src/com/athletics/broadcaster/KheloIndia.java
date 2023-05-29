@@ -46,7 +46,7 @@ public class KheloIndia extends Scene{
 			PrintWriter print_writer, String valueToProcess) throws InterruptedException 
 	{
 		switch (whatToProcess.toUpperCase()) {
-		case "POPULATE-BUG-DESCIPLINE":
+		case "POPULATE-BUG-DESCIPLINE": case "POPULATE-BUG-FREE-TEXT":
 		    populateBug(whatToProcess, print_writer, match, valueToProcess);
 			break;
 		case "POPULATE-L3-NAMESUPER": case "POPULATE-L3-MEDAL-TRACK": case "POPULATE-L3-MEDAL-FIELD":
@@ -107,11 +107,19 @@ public class KheloIndia extends Scene{
 	public void populateBug(String whatToProcess, PrintWriter print_writer,Match match, 
 			String valueToProcess) throws InterruptedException
 	{
-		athleteList = match.getAthleteList().stream().filter(
-				ath -> ath.getAthleteListId() == Integer.valueOf(valueToProcess.split(",")[1])).findAny().orElse(null);
-		if(athleteList != null) {
+		switch (whatToProcess) {
+		case "POPULATE-BUG-FREE-TEXT":
 			print_writer.println("LAYER1*EVEREST*TREEVIEW*Main*FUNCTION*TAG_CONTROL SET tHeader " 
-					+ athleteList.getHeader().split(",")[3].toUpperCase().trim() + ";");
+					+ valueToProcess.split(",")[1].toUpperCase().trim() + ";");
+			break;
+		case "POPULATE-BUG-DESCIPLINE":
+			athleteList = match.getAthleteList().stream().filter(
+					ath -> ath.getAthleteListId() == Integer.valueOf(valueToProcess.split(",")[1])).findAny().orElse(null);
+			if(athleteList != null) {
+				print_writer.println("LAYER1*EVEREST*TREEVIEW*Main*FUNCTION*TAG_CONTROL SET tHeader " 
+						+ athleteList.getHeader().split(",")[3].toUpperCase().trim() + ";");
+			}
+			break;
 		}
 
 		print_writer.println("LAYER1*EVEREST*GLOBAL PREVIEW ON;");

@@ -17,6 +17,7 @@ public class AthleticsUtil {
 	public final static String XML_EXTENSION = ".xml";
 	public final static String LYNX_EVENT = "lynx.evt";
 	public final static String FLD_LYNX_EVENT = "fldlynx.evt";
+	public final static String BUGS_TXT = "Bugs.txt";
 	
 	public final static String PNG_EXTENSION = ".png";
 	public final static String DOUBLE_BACKSLASH = "\\";
