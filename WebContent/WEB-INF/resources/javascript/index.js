@@ -203,7 +203,7 @@ function processAthleticsProcedures(whatToProcess, whichInput)
 			+ ',' + $('#selectIcon option:selected').val();
 		break;
 	case 'POPULATE-L3-MEDAL-TRACK': case 'POPULATE-L3-MEDAL-FIELD': 
-		valueToProcess = 'LT.sum' + ',' + $('#selectL3MedalFileOption option:selected').val() 
+		valueToProcess = 'LT_Medal.sum' + ',' + $('#selectL3MedalFileOption option:selected').val() 
 			+ ',' + $('#selectL3MedalPlayer option:selected').val() 
 			+ ',' + $('#selectL3MedalIcon option:selected').val();
 		break;
